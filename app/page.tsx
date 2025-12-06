@@ -1,14 +1,59 @@
 "use client";
 
-import { useState, KeyboardEvent, FormEvent } from "react";
+import { useState, FormEvent, KeyboardEvent } from "react";
+
+type GenerateResponse = {
+  html?: string;
+  error?: string;
+  [key: string]: any;
+};
 
 export default function Page() {
   const [prompt, setPrompt] = useState("");
+  const [preview, setPreview] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  function handleGenerate() {
-    if (!prompt.trim()) return;
-    // Ici plus tard : appel à ton API GPT-5.1 pour générer le site
-    console.log("Prompt envoyé :", prompt);
+  async function handleGenerate() {
+    if (!prompt.trim() || loading) return;
+    setLoading(true);
+    setErrorMsg(null);
+
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Erreur lors de la génération.");
+      }
+
+      const data: GenerateResponse = await res.json();
+
+      if (data.error) {
+        setErrorMsg(data.error);
+        setPreview("");
+      } else if (typeof data.html === "string") {
+        setPreview(data.html);
+      } else {
+        // fallback : on affiche le JSON formaté
+        setPreview(
+          `<pre style="white-space:pre-wrap;font-size:13px;">${JSON.stringify(
+            data,
+            null,
+            2
+          )}</pre>`
+        );
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || "Erreur inconnue.");
+      setPreview("");
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleSubmit(e: FormEvent) {
@@ -30,7 +75,7 @@ export default function Page() {
 
   return (
     <div className="ub-page">
-      {/* NAV BAR LV */}
+      {/* NAVBAR */}
       <header className="ub-top-nav">
         <div className="ub-nav-left">
           <div className="ub-nav-logo-circle">
@@ -38,7 +83,7 @@ export default function Page() {
           </div>
           <div className="ub-nav-brand">Ultimated Builder IA</div>
           <nav className="ub-nav-links">
-            <span className="ub-nav-link">Apps</span>
+            <span className="ub-nav-link">Applications</span>
             <span className="ub-nav-link">Intégrations</span>
             <span className="ub-nav-link">Templates</span>
             <span className="ub-nav-link">Support</span>
@@ -50,7 +95,7 @@ export default function Page() {
         </div>
       </header>
 
-      {/* CONTENU PRINCIPAL LV */}
+      {/* CONTENU PRINCIPAL */}
       <main className="ub-main-area">
         {/* HERO */}
         <section className="ub-hero">
@@ -59,12 +104,12 @@ export default function Page() {
           </h1>
           <p className="ub-hero-subtitle">
             Décris ton idée de site ou de plateforme, et Ultimated Builder IA
-            te renvoie une structure complète, version{" "}
-            <strong>Ultimated Studio Officiel</strong> (luxe, noir & or).
+            te renvoie une structure complète, dans l&apos;esthétique
+            Ultimated Studio Officiel (noir & or).
           </p>
         </section>
 
-        {/* CARTE PROMPT LV */}
+        {/* CARTE PROMPT (ENTER = GÉNÈRE) */}
         <section className="ub-input-card">
           <form onSubmit={handleSubmit}>
             <div className="ub-input-row">
@@ -74,30 +119,30 @@ export default function Page() {
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={
-                  "Décris l’app ou le site à créer…\n(Enter = générer, Shift + Enter = nouvelle ligne)"
+                  "Décris l’app ou le site à créer…\nEnter = générer, Shift + Enter = nouvelle ligne."
                 }
               />
               <button type="submit" className="ub-generate-btn">
-                →
+                {loading ? "…" : "→"}
               </button>
             </div>
             <div className="ub-input-footer">
               <div className="ub-model-pill">GPT-5.1 · Ultimated</div>
               <div>
-                L&apos;IA construit : pages, sections, structure, comme notre
-                plateforme style Shopify mais en version builder IA.
+                L&apos;IA construit les sections de ton site, comme une
+                plateforme clé en main, mais aux couleurs Ultimated.
               </div>
             </div>
           </form>
         </section>
 
-        {/* CHIPS D’IDÉES (pré-remplissent le prompt) */}
+        {/* CHIPS D’IDÉES */}
         <div className="ub-chip-row">
           <button
             className="ub-chip"
             onClick={() =>
               applyIdea(
-                "Une plateforme style Shopify Ultimated Shop où les clients créent leur propre boutique luxe (noir et or), avec abonnements et dashboard."
+                "Une plateforme de boutiques en ligne Ultimated où les clients créent leur propre boutique luxe (noir et or) avec abonnements et dashboard."
               )
             }
           >
@@ -107,7 +152,7 @@ export default function Page() {
             className="ub-chip"
             onClick={() =>
               applyIdea(
-                "Un site de liquidation pour camions et remorques avec inventaire, filtres avancés et formulaire de financement."
+                "Un site de liquidation pour camions et remorques avec inventaire, filtres avancés, photos et formulaire de financement."
               )
             }
           >
@@ -117,7 +162,7 @@ export default function Page() {
             className="ub-chip"
             onClick={() =>
               applyIdea(
-                "Un dashboard crypto luxe avec suivi de portefeuilles, graphiques temps réel et alertes IA."
+                "Un dashboard crypto luxe avec suivi de portefeuilles, graphiques temps réel et alertes IA personnalisées."
               )
             }
           >
@@ -135,7 +180,30 @@ export default function Page() {
           </button>
         </div>
 
-        {/* APPS RÉCENTES LV */}
+        {/* PREVIEW DU SITE GÉNÉRÉ */}
+        <section className="ub-preview-section">
+          <h2 className="ub-preview-title">Preview du site généré</h2>
+          <div className="ub-preview-box">
+            {errorMsg && (
+              <p style={{ color: "#f97373", marginBottom: 8 }}>{errorMsg}</p>
+            )}
+            {!preview && !errorMsg && (
+              <p style={{ fontSize: 13, color: "#9ca3af" }}>
+                Écris ton idée de site ci-dessus puis appuie sur <b>Enter</b> ou
+                sur la flèche pour générer une preview. Le rendu s&apos;affiche
+                ici.
+              </p>
+            )}
+            {preview && (
+              <div
+                dangerouslySetInnerHTML={{ __html: preview }}
+                style={{ fontSize: 13 }}
+              />
+            )}
+          </div>
+        </section>
+
+        {/* APPS RÉCENTES */}
         <section className="ub-recent">
           <div className="ub-recent-header">
             <div className="ub-recent-title">Apps récentes</div>
@@ -183,15 +251,29 @@ export default function Page() {
             </article>
           </div>
         </section>
+
+        {/* SUPPORT IA ULTIMATED */}
+        <section className="ub-support">
+          <div className="ub-support-card">
+            <div className="ub-support-text">
+              <div className="ub-support-title">Support IA Ultimated</div>
+              <div>
+                Besoin d&apos;aide pour une idée de site, une intégration ou un
+                bug ? Notre support IA t&apos;accompagne pour optimiser ton
+                builder et tes boutiques.
+              </div>
+            </div>
+            <button className="ub-support-btn">
+              Ouvrir le support IA
+            </button>
+          </div>
+        </section>
       </main>
 
       {/* FOOTER */}
       <footer className="ub-footer">
         <span>From the House of Ultimated Studio Officiel</span>
-        <span>
-          Ultimated Builder IA — ton builder de sites luxe, inspiré de ta
-          plateforme Shopify Ultimated.
-        </span>
+        <span>Ultimated Builder IA — Outil interne, version noir & or.</span>
       </footer>
     </div>
   );
