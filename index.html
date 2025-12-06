@@ -43,7 +43,7 @@
 
     .page {
       width: 100%;
-      max-width: 1120px;
+      max-width: 1180px;
       margin: auto;
       display: flex;
       flex-direction: column;
@@ -137,36 +137,42 @@
       font-weight: 500;
     }
 
-    /* Bloc prompt façon Base44 */
+    /* Layout principal : builder + preview */
+
+    .main-grid {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* Bloc prompt (gauche) */
 
     .shell {
-      margin-top: 20px;
       background:
         radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 60%),
         linear-gradient(180deg, #101019 0, #050509 100%);
       border-radius: 26px;
-      padding: 28px 26px 22px;
+      padding: 24px 22px 18px;
       box-shadow:
         0 30px 80px rgba(0, 0, 0, 0.9),
         0 0 0 1px rgba(0,0,0,0.8);
       border: 1px solid rgba(255,255,255,0.04);
     }
 
-    .prompt-row {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    @media (min-width: 900px) {
-      .prompt-row {
-        flex-direction: row;
-        align-items: stretch;
-      }
+    .shell-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 10px;
     }
 
     .prompt-box {
-      flex: 1;
       background: #050507;
       border-radius: 22px;
       border: 1px solid rgba(255,255,255,0.06);
@@ -213,6 +219,7 @@
       gap: 12px;
       font-size: 0.78rem;
       color: #a5a5a5;
+      margin-top: 4px;
     }
 
     .prompt-hint-row span {
@@ -229,19 +236,10 @@
     }
 
     .button-wrap {
-      width: 100%;
-      max-width: 260px;
-      margin: 0 auto;
+      margin-top: 14px;
       display: flex;
       align-items: center;
-      justify-content: center;
-    }
-
-    @media (min-width: 900px) {
-      .button-wrap {
-        margin: 0;
-        justify-content: flex-end;
-      }
+      justify-content: flex-end;
     }
 
     button {
@@ -261,7 +259,7 @@
       text-transform: uppercase;
       letter-spacing: 0.16em;
       cursor: pointer;
-      padding: 13px 30px;
+      padding: 12px 26px;
       box-shadow:
         0 20px 40px rgba(0, 0, 0, 0.9),
         0 0 0 1px rgba(0,0,0,0.7);
@@ -287,16 +285,14 @@
         0 0 0 1px rgba(215, 183, 91, 0.55);
     }
 
-    /* Chips idées */
-
     .ideas-row {
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     .ideas-label {
       font-size: 0.8rem;
       color: #bfbfbf;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .chips {
@@ -315,34 +311,100 @@
       cursor: default;
     }
 
-    /* Résultat */
-
     .result {
-      margin-top: 20px;
-      border-radius: 22px;
-      padding: 16px 18px 20px;
-      background: radial-gradient(circle at top left, #181118 0, #050507 60%);
-      border: 1px solid rgba(255,255,255,0.05);
-      font-size: 0.9rem;
-      max-height: 360px;
+      margin-top: 14px;
+      border-radius: 18px;
+      padding: 10px 12px 12px;
+      background: #050507;
+      border: 1px dashed rgba(255,255,255,0.09);
+      font-size: 0.8rem;
+      max-height: 140px;
       overflow: auto;
       white-space: pre-wrap;
       color: #f0f0f0;
     }
 
     .result.empty {
-      border-style: dashed;
       color: #a3a3a3;
-      text-align: left;
     }
 
-    /* SECTION APPS RÉCENTES */
+    /* Preview (droite) */
+
+    .preview-card {
+      background: linear-gradient(180deg, #101019 0, #050507 100%);
+      border-radius: 26px;
+      padding: 20px 18px 16px;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .preview-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .preview-badge {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(215,183,91,0.12);
+      border: 1px solid rgba(215,183,91,0.55);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .preview-hint {
+      font-size: 0.77rem;
+      color: #c4c4c4;
+    }
+
+    .preview-frame-wrap {
+      margin-top: 6px;
+      flex: 1;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: radial-gradient(circle at top, #1e1a12 0, #050507 60%);
+    }
+
+    #previewFrame {
+      width: 100%;
+      height: 380px;
+      border: none;
+      background: #000;
+    }
+
+    /* SECTION APPS RÉCENTES + SUPPORT */
+
+    .bottom-grid {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .bottom-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
 
     .recent {
-      margin-top: 26px;
       background: linear-gradient(180deg, #0b0b10 0, #050507 100%);
       border-radius: 26px;
-      padding: 20px 22px 18px;
+      padding: 18px 18px 16px;
       border: 1px solid rgba(255,255,255,0.04);
       box-shadow:
         0 24px 60px rgba(0, 0, 0, 0.9),
@@ -352,37 +414,30 @@
     .recent-header {
       font-size: 0.9rem;
       font-weight: 600;
-      margin-bottom: 14px;
-      color: #f3f3f3;
+      margin-bottom: 10px;
     }
 
     .recent-row {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-    }
-
-    @media (min-width: 820px) {
-      .recent-row {
-        flex-direction: row;
-      }
+      gap: 10px;
     }
 
     .recent-card {
       flex: 1;
       display: flex;
       gap: 12px;
-      padding: 12px 14px;
-      border-radius: 18px;
+      padding: 10px 12px;
+      border-radius: 16px;
       background: var(--card);
       border: 1px solid rgba(255,255,255,0.06);
       align-items: center;
     }
 
     .recent-thumb {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
       background: radial-gradient(circle at top, #f7c96a 0, #2b2010 55%);
       display: flex;
       align-items: center;
@@ -417,17 +472,16 @@
     /* SUPPORT IA */
 
     .support {
-      margin-top: 26px;
       background: linear-gradient(180deg, #11111a 0, #050507 100%);
       border-radius: 26px;
-      padding: 20px 22px 18px;
+      padding: 18px 18px 16px;
       border: 1px solid rgba(255,255,255,0.06);
       box-shadow:
         0 26px 70px rgba(0, 0, 0, 0.95),
         0 0 0 1px rgba(0,0,0,0.7);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .support-header {
@@ -463,12 +517,12 @@
     }
 
     .support-chat {
-      margin-top: 6px;
+      margin-top: 4px;
       border-radius: 18px;
       background: #050507;
       border: 1px solid rgba(255,255,255,0.06);
       padding: 10px 12px;
-      max-height: 260px;
+      max-height: 210px;
       overflow-y: auto;
       font-size: 0.8rem;
     }
@@ -499,7 +553,7 @@
     }
 
     .support-input-row {
-      margin-top: 10px;
+      margin-top: 8px;
       display: flex;
       gap: 8px;
     }
@@ -546,7 +600,7 @@
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #8a8a8a;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .footer span {
@@ -575,15 +629,16 @@
         <span>Ultimated Builder IA</span>
       </div>
       <div class="hero-sub">
-        Décris le type de site que tu veux et l’IA te renvoie une
-        <strong>structure prête à designer</strong> : sections, textes de base,
-        idées de layout et CTA.
+        Décris le type de site que tu veux et l’IA te renvoie un
+        <strong>site complet généré en direct</strong> dans la preview à droite.
       </div>
     </div>
 
-    <!-- bloc générateur -->
-    <div class="shell">
-      <div class="prompt-row">
+    <!-- Builder + Preview -->
+    <div class="main-grid">
+      <!-- Builder -->
+      <div class="shell">
+        <div class="shell-title">Décris ton site (comme sur Base44, mais version Ultimated)</div>
         <div class="prompt-box">
           <div class="prompt-input-wrap">
             <textarea
@@ -598,99 +653,115 @@
             <div>
               Appuie sur <span>Entrée</span> pour générer (ou utilise le bouton).
             </div>
-            <div class="model-pill">✨ GPT-5.1 (via API)</div>
+            <div class="model-pill">✨ GPT-5.1 (API)</div>
           </div>
         </div>
 
         <div class="button-wrap">
           <button onclick="generate()">Générer mon site</button>
         </div>
-      </div>
 
-      <div class="ideas-row">
-        <div class="ideas-label">Idées pour démarrer</div>
-        <div class="chips">
-          <div class="chip">Plateforme bancaire</div>
-          <div class="chip">Dashboard crypto</div>
-          <div class="chip">Boutique de luxe</div>
-          <div class="chip">Agence marketing</div>
-          <div class="chip">Landing SaaS</div>
-          <div class="chip">Espace membre VIP</div>
-        </div>
-      </div>
-
-      <div id="result" class="result empty">
-        La structure générée du site apparaîtra ici (sections, titres, textes de base…)
-      </div>
-    </div>
-
-    <!-- Applications récentes -->
-    <div class="recent">
-      <div class="recent-header">Applications récentes</div>
-      <div class="recent-row">
-        <div class="recent-card">
-          <div class="recent-thumb">MP</div>
-          <div>
-            <div class="recent-info-title">MotoShop Pro</div>
-            <div class="recent-info-sub">
-              Concessionnaire de motos en ligne, fiches produits détaillées & financement.
-            </div>
-            <div class="recent-info-time">Mis à jour il y a 10 heures</div>
+        <div class="ideas-row">
+          <div class="ideas-label">Idées pour démarrer</div>
+          <div class="chips">
+            <div class="chip">Plateforme bancaire</div>
+            <div class="chip">Dashboard crypto</div>
+            <div class="chip">Boutique de luxe</div>
+            <div class="chip">Agence marketing</div>
+            <div class="chip">Landing SaaS</div>
+            <div class="chip">Espace membre VIP</div>
           </div>
         </div>
 
-        <div class="recent-card">
-          <div class="recent-thumb">UC</div>
-          <div>
-            <div class="recent-info-title">Ultimated Chat</div>
-            <div class="recent-info-sub">
-              Assistant IA personnel (humeur, ton, style) pour répondre comme toi.
-            </div>
-            <div class="recent-info-time">Mis à jour il y a 11 heures</div>
-          </div>
+        <div id="result" class="result empty">
+          Un résumé du site généré apparaîtra ici (titre + sections), la version complète est
+          affichée dans la preview à droite.
         </div>
+      </div>
 
-        <div class="recent-card">
-          <div class="recent-thumb">US</div>
-          <div>
-            <div class="recent-info-title">Ultimated Shop</div>
-            <div class="recent-info-sub">
-              Plateforme e-commerce luxe pour gérer boutiques, abonnements et clients.
-            </div>
-            <div class="recent-info-time">Mis à jour il y a 13 heures</div>
-          </div>
+      <!-- Preview -->
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="preview-title">Preview du site généré</div>
+          <div class="preview-badge">Live render</div>
+        </div>
+        <div class="preview-hint">
+          Après génération, le site complet s’affiche ici, directement dans l’app.
+        </div>
+        <div class="preview-frame-wrap">
+          <iframe id="previewFrame"></iframe>
         </div>
       </div>
     </div>
 
-    <!-- Support IA -->
-    <div class="support">
-      <div class="support-header">
-        <div class="support-title">Support IA — Ultimated</div>
-        <div class="support-badge">Mode assistant</div>
-      </div>
-      <div class="support-sub">
-        Pose une question pendant que tu construis tes sites :
-        <strong>design, textes, sections, stratégie</strong>.
-        L’IA répond comme un assistant interne Ultimated.
-      </div>
+    <!-- Apps récentes + Support IA -->
+    <div class="bottom-grid">
+      <div class="recent">
+        <div class="recent-header">Applications récentes</div>
+        <div class="recent-row">
+          <div class="recent-card">
+            <div class="recent-thumb">MP</div>
+            <div>
+              <div class="recent-info-title">MotoShop Pro</div>
+              <div class="recent-info-sub">
+                Concessionnaire de motos en ligne, fiches produits détaillées & financement.
+              </div>
+              <div class="recent-info-time">Mis à jour il y a 10 heures</div>
+            </div>
+          </div>
 
-      <div id="chatMessages" class="support-chat">
-        <div class="msg bot">
-          <span>👋 Salut, ici l’assistant Ultimated. Dis-moi sur quel type de site tu travailles et ce que tu veux améliorer (hero, couleurs, copy, sections…).</span>
+          <div class="recent-card">
+            <div class="recent-thumb">UC</div>
+            <div>
+              <div class="recent-info-title">Ultimated Chat</div>
+              <div class="recent-info-sub">
+                Assistant IA personnel (humeur, ton, style) pour répondre comme toi.
+              </div>
+              <div class="recent-info-time">Mis à jour il y a 11 heures</div>
+            </div>
+          </div>
+
+          <div class="recent-card">
+            <div class="recent-thumb">US</div>
+            <div>
+              <div class="recent-info-title">Ultimated Shop</div>
+              <div class="recent-info-sub">
+                Plateforme e-commerce luxe pour gérer boutiques, abonnements et clients.
+              </div>
+              <div class="recent-info-time">Mis à jour il y a 13 heures</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="support-input-row">
-        <input
-          id="supportInput"
-          type="text"
-          placeholder="Exemple : &quot;Comment améliorer la page d’accueil de mon site bancaire ?&quot;"
-        />
-        <button onclick="sendSupport()">Envoyer</button>
-      </div>
-      <div class="support-hint">
-        Entrée pour envoyer (comme un chat normal).
+      <div class="support">
+        <div class="support-header">
+          <div class="support-title">Support IA — Ultimated</div>
+          <div class="support-badge">Mode assistant</div>
+        </div>
+        <div class="support-sub">
+          Pose une question pendant que tu construis tes sites :
+          <strong>design, textes, sections, stratégie</strong>.
+          L’IA répond comme un assistant interne Ultimated.
+        </div>
+
+        <div id="chatMessages" class="support-chat">
+          <div class="msg bot">
+            <span>👋 Salut, ici l’assistant Ultimated. Dis-moi sur quel type de site tu travailles et ce que tu veux améliorer (hero, couleurs, copy, sections…).</span>
+          </div>
+        </div>
+
+        <div class="support-input-row">
+          <input
+            id="supportInput"
+            type="text"
+            placeholder="Exemple : &quot;Comment améliorer la page d’accueil de mon site bancaire ?&quot;"
+          />
+          <button onclick="sendSupport()">Envoyer</button>
+        </div>
+        <div class="support-hint">
+          Entrée pour envoyer (comme un chat normal).
+        </div>
       </div>
     </div>
 
@@ -702,12 +773,13 @@
   <script>
     const textarea = document.getElementById("userInput");
     const resultDiv = document.getElementById("result");
+    const previewFrame = document.getElementById("previewFrame");
     const chatBox = document.getElementById("chatMessages");
     const supportInput = document.getElementById("supportInput");
 
     const chatHistory = [];
 
-    // Entrée = générer (creator)
+    // Entrée = générer (builder)
     textarea.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -732,18 +804,34 @@
       }
 
       resultDiv.classList.remove("empty");
-      resultDiv.textContent = "⏳ Génération de la structure du site…";
+      resultDiv.textContent = "⏳ Génération du site complet en cours…";
 
       try {
         const response = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt }),
+          body: JSON.stringify({ prompt, mode: "site" }),
         });
 
         const data = await response.json();
+
+        if (!data.output) {
+          resultDiv.textContent =
+            "Aucune réponse (vérifie la clé API ou le billing OpenAI).";
+          return;
+        }
+
+        const html = data.output;
+
+        // Petit résumé dans la zone texte (optionnel)
         resultDiv.textContent =
-          data.output || "Aucune réponse (vérifie la clé API ou le billing OpenAI).";
+          "Site généré. Aperçu en live à droite. Tu peux régénérer autant que tu veux avec d'autres idées. (Le code complet est dans la preview).";
+
+        // Injection du HTML dans l'iframe pour faire la vraie preview
+        const doc = previewFrame.contentWindow.document;
+        doc.open();
+        doc.write(html);
+        doc.close();
       } catch (err) {
         console.error(err);
         resultDiv.textContent =
@@ -772,8 +860,8 @@
       addMessage("bot", "⏳ Je réfléchis à une idée pour toi…");
 
       const composedPrompt =
-        "Tu es l'assistant de support d'Ultimated Builder IA. " +
-        "Donne des conseils concrets (sections, textes, UX, idées de design) pour construire ou améliorer un site.\n\n" +
+        "Contexte : l'utilisateur construit un site avec un générateur de pages noir & or style Ultimated Studio. " +
+        "Donne-lui des conseils concrets (hero, sections, textes) en français.\n\n" +
         "Historique:\n" +
         chatHistory.join("\n") +
         "\nAssistant :";
@@ -782,7 +870,7 @@
         const response = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: composedPrompt }),
+          body: JSON.stringify({ prompt: composedPrompt, mode: "chat" }),
         });
 
         const data = await response.json();
