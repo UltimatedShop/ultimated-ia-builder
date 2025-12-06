@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimated IA Builder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      padding: 40px;
+      text-align: center;
+    }
+
+    input, textarea, button {
+      width: 90%;
+      max-width: 600px;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+
+    textarea {
+      height: 150px;
+    }
+
+    button {
+      background: gold;
+      color: black;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #111;
+      border-radius: 10px;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔥 Ultimated IA Builder 🔥</h1>
+  <p>Décris le site que tu veux créer :</p>
+
+  <textarea id="userInput" placeholder="Exemple: un site bancaire ultra luxe en noir et or..."></textarea>
+
+  <button onclick="generate()">Générer mon site</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function generate() {
+      const prompt = document.getElementById("userInput").value;
+      if (!prompt) return alert("Écris quelque chose !");
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = "⏳ Génération...";
+
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
+
+      const data = await response.json();
+      resultDiv.innerHTML = data.output || "Erreur.";
+    }
+  </script>
+
+</body>
+</html>
