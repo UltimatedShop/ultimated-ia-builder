@@ -1,19 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { GeneratedSitePreview } from "@/components/GeneratedSitePreview";
-
-type Mode = "builder" | "assistant";
+import {
+  GeneratedSitePreview,
+  GeneratedConfig,
+} from "./components/GeneratedSitePreview";
 
 export default function Page() {
   const [prompt, setPrompt] = useState("");
-  const [mode, setMode] = useState<Mode>("builder");
-  const [previewConfig, setPreviewConfig] = useState<any | null>(null);
+  const [mode, setMode] = useState<"builder" | "assistant">("builder");
+  const [previewConfig, setPreviewConfig] = useState<GeneratedConfig | null>(
+    null
+  );
 
   function handleGenerate() {
     const safePrompt = prompt.trim() || "Site Ultimated généré par l’IA";
 
-    setPreviewConfig({
+    const config: GeneratedConfig = {
       title: safePrompt,
       subtitle:
         "Site généré en direct par Ultimated Builder IA (version démo visuelle).",
@@ -24,33 +27,35 @@ export default function Page() {
           title: "Ce que ton site peut faire",
           items: [
             {
+              icon: "💎",
               label: "Style luxe Ultimated",
               description:
                 "Fond noir, accents or, look boutique / SaaS haut de gamme.",
-              icon: "💎",
             },
             {
+              icon: "⚡️",
               label: "Texte personnalisé",
               description:
                 "Le contenu s’adapte automatiquement à ce que tu écris dans le prompt.",
-              icon: "⚡️",
             },
             {
+              icon: "🤖",
               label: "Prêt pour l’IA",
               description:
-                "Prochaine étape : brancher GPT-5.1 pour générer toute la structure de la page automatiquement.",
-              icon: "🤖",
+                "Prochaine étape : GPT-5.1 génère toute la structure du site.",
             },
           ],
         },
         {
           type: "cta",
           title: "Prochaine étape",
-          text: "À l’étape suivante, on remplace ce layout fixe par un layout 100% généré par GPT-5.1 selon ta description.",
-          buttonLabel: "Continuer le setup IA bientôt",
+          text: "Ensuite, on connectera vraiment l’API OpenAI pour construire le site selon ton texte.",
+          buttonLabel: "Activer le mode IA plus tard",
         },
       ],
-    });
+    };
+
+    setPreviewConfig(config);
   }
 
   return (
@@ -82,13 +87,13 @@ export default function Page() {
               Étape 1
             </p>
             <h2 className="text-lg md:text-xl font-semibold text-yellow-100">
-              Décris le site que tu veux (Ultimated Builder IA)
+              Décris le site que tu veux
             </h2>
             <p className="text-xs md:text-sm text-yellow-200/70 mt-2">
-              Exemple&nbsp;:{" "}
+              Exemple :{" "}
               <span className="italic text-yellow-300">
-                “Fais un site e-commerce Liquidation Montcalm où je peux
-                importer moi-même mes produits.”
+                “Fais un site e-commerce liquidation où je peux importer moi-même
+                mes produits.”
               </span>
             </p>
           </div>
@@ -123,7 +128,7 @@ export default function Page() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               className="flex-1 w-full rounded-xl bg-black/60 border border-yellow-800/60 focus:border-yellow-400/80 focus:ring-2 focus:ring-yellow-500/40 outline-none text-sm md:text-[15px] px-4 py-3 font-medium text-yellow-50 placeholder:text-yellow-600/70 resize-none"
-              placeholder="Décris ton site en détail : type de business, style, sections, produits, ambiance, etc..."
+              placeholder="Décris ton site : type de business, sections, ambiance, etc..."
             />
             <p className="text-[11px] text-yellow-500/70 mt-1">
               Appuie sur <span className="font-semibold">Entrée</span> ou sur le
@@ -139,3 +144,23 @@ export default function Page() {
             >
               ⚡ GÉNÉRER MON SITE (démo)
             </button>
+            <p className="text-[11px] text-yellow-500/70">
+              Étape 2 : ce bouton utilisera vraiment GPT-5.1.
+            </p>
+          </div>
+        </section>
+
+        {/* Colonne droite : preview visuel */}
+        <section className="bg-[#050304] px-4 md:px-6 py-6">
+          <GeneratedSitePreview config={previewConfig} />
+        </section>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-yellow-900/40 bg-black/90 px-6 py-3 text-[11px] md:text-xs text-yellow-500/80 flex items-center justify-between">
+        <span>From the House of Ultimated Studio Officiel</span>
+        <span>Ultimated Builder IA — Prototype visuel, Étape 1/3</span>
+      </footer>
+    </main>
+  );
+}
