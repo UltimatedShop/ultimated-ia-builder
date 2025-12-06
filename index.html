@@ -37,50 +37,68 @@
       padding: 32px 16px;
     }
 
-    .shell {
+    .page {
       width: 100%;
-      max-width: 1120px;
+      max-width: 1100px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 24px;
     }
 
-    .logo-wrap {
-      display: flex;
-      justify-content: center;
+    .hero-top {
+      text-align: center;
+    }
+
+    .hero-eyebrow {
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      color: #a3a3a3;
       margin-bottom: 4px;
     }
 
-    .logo-wrap img {
-      max-width: 220px;
-      width: 100%;
-      height: auto;
-      display: block;
-      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, 0.85));
+    .hero-title {
+      font-family: "Playfair Display", "Times New Roman", serif;
+      font-size: 2.1rem;
+      margin-bottom: 6px;
     }
 
-    .brand {
-      text-align: center;
-      letter-spacing: 0.22em;
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      color: #a3a3a3;
+    .hero-title span {
+      background: linear-gradient(
+        120deg,
+        var(--gold1),
+        var(--gold2),
+        var(--gold3),
+        var(--gold1)
+      );
+      background-size: 220% 220%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
-    .brand span {
+    .hero-sub {
+      font-size: 0.98rem;
+      color: #d0d0d0;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .hero-sub strong {
       color: var(--gold2);
+      font-weight: 500;
     }
 
     .layout {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
-    @media (min-width: 980px) {
+    @media (min-width: 960px) {
       .layout {
         flex-direction: row;
-        align-items: stretch;
+        align-items: flex-start;
       }
     }
 
@@ -89,11 +107,11 @@
         radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 55%),
         linear-gradient(135deg, rgba(11, 11, 12, 0.96), rgba(3, 3, 3, 0.98));
       border-radius: 22px;
-      border: 1px solid rgba(215, 183, 91, 0.55);
+      border: 1px solid rgba(215, 183, 91, 0.45);
       box-shadow:
-        0 28px 70px rgba(0, 0, 0, 0.85),
+        0 24px 60px rgba(0, 0, 0, 0.85),
         0 0 0 1px rgba(0, 0, 0, 0.7);
-      padding: 24px 22px 22px;
+      padding: 22px 22px 20px;
       position: relative;
       overflow: hidden;
     }
@@ -110,74 +128,51 @@
     .card-main {
       flex: 1.6;
     }
+    .card-main-inner {
+      position: relative;
+      z-index: 1;
+    }
 
-    .card-chat {
+    .card-support {
       flex: 1;
     }
+    .card-support-inner {
+      position: relative;
+      z-index: 1;
+    }
 
-    @media (min-width: 980px) {
+    @media (min-width: 960px) {
       .card-main {
-        padding: 26px 30px 24px;
+        padding: 24px 26px 20px;
       }
-      .card-chat {
-        padding: 22px 22px 20px;
+      .card-support {
+        padding: 20px 20px 18px;
       }
-    }
-
-    @keyframes goldGlow {
-      0% {
-        background-position: 0% 50%;
-        text-shadow: 0 0 5px rgba(247, 201, 106, 0.05);
-      }
-      50% {
-        background-position: 100% 50%;
-        text-shadow: 0 0 16px rgba(243, 224, 163, 0.4);
-      }
-      100% {
-        background-position: 0% 50%;
-        text-shadow: 0 0 5px rgba(247, 201, 106, 0.05);
-      }
-    }
-
-    .title {
-      font-family: "Playfair Display", "Times New Roman", serif;
-      font-size: 1.9rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      margin-bottom: 4px;
-    }
-
-    .title span {
-      background: linear-gradient(
-        120deg,
-        var(--gold1),
-        var(--gold2),
-        var(--gold3),
-        var(--gold1)
-      );
-      background-size: 220% 220%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: goldGlow 7s ease-in-out infinite;
-    }
-
-    .subtitle {
-      font-size: 0.93rem;
-      color: #d0d0d0;
-      margin-bottom: 18px;
-    }
-
-    .subtitle strong {
-      color: var(--gold2);
-      font-weight: 500;
     }
 
     .input-row {
       display: flex;
       flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-label {
+      font-size: 0.85rem;
+      color: #cfcfcf;
+      text-align: left;
+    }
+
+    .input-zone {
+      display: flex;
+      flex-direction: column;
       gap: 10px;
-      margin-bottom: 10px;
+    }
+
+    @media (min-width: 800px) {
+      .input-zone {
+        flex-direction: row;
+        align-items: stretch;
+      }
     }
 
     textarea {
@@ -212,8 +207,64 @@
       transform: translateY(-1px);
     }
 
+    .button-wrap {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    @media (min-width: 800px) {
+      .button-wrap {
+        justify-content: center;
+        width: 220px;
+      }
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(
+        120deg,
+        var(--gold1),
+        var(--gold2),
+        var(--gold3),
+        var(--gold1)
+      );
+      background-size: 240% 240%;
+      color: #171717;
+      font-weight: 600;
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      padding: 11px 26px;
+      box-shadow:
+        0 18px 32px rgba(0, 0, 0, 0.82),
+        0 0 0 1px rgba(0, 0, 0, 0.7);
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        filter 0.15s ease;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow:
+        0 24px 44px rgba(0, 0, 0, 0.88),
+        0 0 0 1px rgba(215, 183, 91, 0.7);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(215, 183, 91, 0.5);
+    }
+
     .hint {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: #a3a3a3;
     }
 
@@ -249,60 +300,19 @@
     .file-note {
       font-size: 0.75rem;
       color: #8d8d8d;
+      margin-top: 2px;
     }
 
-    .button-wrap {
-      margin-top: 8px;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    button {
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(
-        120deg,
-        var(--gold1),
-        var(--gold2),
-        var(--gold3),
-        var(--gold1)
-      );
-      background-size: 240% 240%;
-      color: #171717;
-      font-weight: 600;
-      font-size: 0.86rem;
+    .result-title {
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: #c8c8c8;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
-      cursor: pointer;
-      padding: 9px 22px;
-      box-shadow:
-        0 18px 32px rgba(0, 0, 0, 0.82),
-        0 0 0 1px rgba(0, 0, 0, 0.7);
-      transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        filter 0.15s ease;
-      animation: goldGlow 6s ease-in-out infinite;
-      white-space: nowrap;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.03);
-      box-shadow:
-        0 24px 44px rgba(0, 0, 0, 0.88),
-        0 0 0 1px rgba(215, 183, 91, 0.7);
-    }
-
-    button:active {
-      transform: translateY(1px);
-      box-shadow:
-        0 12px 24px rgba(0, 0, 0, 0.85),
-        0 0 0 1px rgba(215, 183, 91, 0.5);
+      letter-spacing: 0.14em;
     }
 
     .result {
-      margin-top: 16px;
+      margin-top: 8px;
       border-radius: 18px;
       padding: 15px 15px 18px;
       background: radial-gradient(
@@ -310,47 +320,56 @@
         #18110a 0,
         #050505 55%
       );
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       color: #e8e8e8;
       text-align: left;
       font-size: 0.9rem;
-      max-height: 380px;
+      max-height: 360px;
       overflow: auto;
       white-space: pre-wrap;
     }
 
     .result.empty {
       border-style: dashed;
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
-    .chat-title {
+    .support-title {
       font-family: "Playfair Display", "Times New Roman", serif;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       margin-bottom: 4px;
     }
 
-    .chat-sub {
+    .support-sub {
+      font-size: 0.8rem;
+      color: #c8c8c8;
+      margin-bottom: 10px;
+    }
+
+    .support-tip {
       font-size: 0.78rem;
-      color: #bfbfbf;
-      margin-bottom: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .chat-log {
-      background: rgba(0, 0, 0, 0.78);
-      border-radius: 14px;
-      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      padding: 9px 10px;
       font-size: 0.78rem;
-      max-height: 210px;
+      max-height: 200px;
       overflow: auto;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       border: 1px solid rgba(255, 255, 255, 0.04);
       white-space: pre-wrap;
     }
 
     .chat-input {
       width: 100%;
-      padding: 9px 11px;
+      padding: 8px 11px;
       border-radius: 999px;
       border: 1px solid #343434;
       background: rgba(9, 9, 9, 0.97);
@@ -372,11 +391,11 @@
 
     .footer {
       text-align: center;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #8a8a8a;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     .footer span {
@@ -385,79 +404,89 @@
   </style>
 </head>
 <body>
-  <div class="shell">
-    <div class="logo-wrap">
-      <img src="uid-logo.png" alt="UID — Ultimated Builder IA" />
-    </div>
-
-    <div class="brand">
-      From the House of <span>Ultimated Studio Officiel</span>
+  <div class="page">
+    <div class="hero-top">
+      <div class="hero-eyebrow">Studio interne • Outil personnel</div>
+      <div class="hero-title">
+        <span>Que veux-tu construire aujourd’hui&nbsp;?</span>
+      </div>
+      <div class="hero-sub">
+        Décris simplement le site que tu veux créer, et
+        <strong>Ultimated IA Builder</strong> te renvoie une structure complète :
+        sections, textes de base, idées de layout, CTA…
+      </div>
     </div>
 
     <div class="layout">
-      <!-- Bloc principal : génération de site -->
+      <!-- Bloc builder -->
       <div class="card card-main">
-        <div class="title">
-          <span>Ultimated IA Builder</span>
-        </div>
-        <div class="subtitle">
-          Décris ton idée et laisse l’IA esquisser un site
-          <strong>ultra luxe, prêt à designer</strong>.
-        </div>
+        <div class="card-main-inner">
+          <div class="input-row">
+            <div class="input-label">Décris ton site (idée, style, cible, etc.) :</div>
 
-        <div class="input-row">
-          <textarea
-            id="userInput"
-            placeholder="Exemples : 
+            <div class="input-zone">
+              <textarea
+                id="userInput"
+                placeholder="Exemples : 
 - Plateforme bancaire noire & or avec dashboard premium
 - Site crypto futuriste avec sections gains/risques
 - Boutique en ligne minimaliste pour montres de luxe"
-          ></textarea>
+              ></textarea>
 
-          <div class="hint">
-            Appuie simplement sur <span>Entrée</span> pour générer, ou utilise le bouton.
+              <div class="button-wrap">
+                <button onclick="generate()">Générer mon site</button>
+              </div>
+            </div>
+
+            <div class="hint">
+              Appuie sur <span>Entrée</span> dans la zone de texte pour générer (raccourci rapide),
+              ou clique sur le bouton.
+            </div>
+
+            <div class="file-row">
+              <span>Image de référence (maquette, screenshot) :</span>
+              <input type="file" id="imageInput" accept="image/*" />
+              <div id="fileInfo" class="file-badge" style="display:none;"></div>
+            </div>
+
+            <div class="file-note">
+              L’image sera utilisée plus tard avec la vision. Pour l’instant, la génération se base
+              surtout sur ton texte.
+            </div>
           </div>
 
-          <div class="file-row">
-            <span>Image de référence (maquette, screenshot) :</span>
-            <input type="file" id="imageInput" accept="image/*" />
-            <div id="fileInfo" class="file-badge" style="display:none;"></div>
+          <div class="result-title">Structure proposée par l’IA</div>
+          <div id="result" class="result empty">
+            La structure générée du site apparaîtra ici (sections, titres, FAQ, CTA…)
           </div>
-
-          <div class="file-note">
-            L’image sera utilisée dès qu’on activera le modèle vision. Pour
-            l’instant, la génération se base surtout sur ton texte.
-          </div>
-        </div>
-
-        <div class="button-wrap">
-          <button onclick="generate()">Générer mon site</button>
-        </div>
-
-        <div id="result" class="result empty">
-          La structure générée du site apparaîtra ici (sections, titres, FAQ…)
         </div>
       </div>
 
       <!-- Bloc support IA -->
-      <div class="card card-chat">
-        <div class="chat-title">Support IA — Ultimated</div>
-        <div class="chat-sub">
-          Pose une question (design, texte, stratégie) pendant que tu construis tes
-          sites.
-        </div>
+      <div class="card card-support">
+        <div class="card-support-inner">
+          <div class="support-title">Support IA — Ultimated</div>
+          <div class="support-sub">
+            Pose une question pendant que tu construis (texte, UX, stratégie, idées de sections…).
+          </div>
 
-        <div id="chatLog" class="chat-log">
-💬 Astuce : demande par exemple
-« Comment améliorer la page d'accueil de ce site bancaire ? »
-        </div>
+          <div class="support-tip">
+            💡 Astuce : <br />
+            « Comment rendre la page d’accueil de ce site bancaire plus premium ? »<br />
+            « Donne-moi 3 slogans pour une landing crypto noire & or. »
+          </div>
 
-        <input
-          id="chatInput"
-          class="chat-input"
-          placeholder="Pose ta question à l'assistant Ultimated…"
-        />
-        <button class="chat-send" onclick="sendSupport()">Envoyer au support IA</button>
+          <div id="chatLog" class="chat-log">
+💬 Envoie ta première question à l’assistant Ultimated pour t’aider à affiner ton site.
+          </div>
+
+          <input
+            id="chatInput"
+            class="chat-input"
+            placeholder="Pose ta question à l'assistant Ultimated…"
+          />
+          <button class="chat-send" onclick="sendSupport()">Envoyer au support IA</button>
+        </div>
       </div>
     </div>
 
