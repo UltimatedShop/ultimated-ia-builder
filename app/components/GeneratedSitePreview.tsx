@@ -1,12 +1,12 @@
 "use client";
 
-type FeatureItem = {
+export type FeatureItem = {
   icon: string;
   label: string;
   description: string;
 };
 
-type Section =
+export type Section =
   | {
       type: "features";
       title: string;
@@ -56,7 +56,6 @@ export function GeneratedSitePreview({
   // —————————————————————
   return (
     <div className="h-full w-full rounded-2xl border border-yellow-900/70 bg-gradient-to-b from-black via-[#050305] to-[#120a05] shadow-[0_22px_45px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
-
       {/* NAVBAR */}
       <div className="border-b border-yellow-900/70 bg-gradient-to-r from-black via-[#1c1307] to-black px-5 md:px-7 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -67,15 +66,15 @@ export function GeneratedSitePreview({
             <p className="text-[11px] uppercase tracking-[0.25em] text-yellow-500/80">
               Ultimated Site
             </p>
-            <p className="text-xs text-yellow-200/80">
-              Preview IA
-            </p>
+            <p className="text-xs text-yellow-200/80">Preview IA</p>
           </div>
         </div>
 
         <div className="hidden md:flex items-center gap-4 text-[11px] text-yellow-200/80">
           <button className="hover:text-yellow-400 transition">Accueil</button>
-          <button className="hover:text-yellow-400 transition">Fonctionnalités</button>
+          <button className="hover:text-yellow-400 transition">
+            Fonctionnalités
+          </button>
           <button className="hover:text-yellow-400 transition">Tarifs</button>
           <button className="rounded-full border border-yellow-500/70 px-3 py-1 text-[11px] text-black bg-yellow-400 font-semibold hover:bg-yellow-300 transition">
             Commencer
@@ -85,7 +84,6 @@ export function GeneratedSitePreview({
 
       {/* CONTENU */}
       <div className="flex-1 overflow-auto">
-
         {/* HERO */}
         <section className="px-6 md:px-10 py-6 md:py-8 border-b border-yellow-900/60 bg-gradient-to-r from-black via-[#1d1307] to-black">
           <div className="max-w-3xl">
@@ -110,8 +108,9 @@ export function GeneratedSitePreview({
           </div>
         </section>
 
-        {/* FEATURES */}
+        {/* FEATURES + CTA */}
         <section className="px-6 md:px-10 py-6 space-y-6">
+          {/* FEATURES */}
           {config.sections
             .filter((s) => s.type === "features")
             .map((section, idx) => {
@@ -151,29 +150,4 @@ export function GeneratedSitePreview({
           {config.sections
             .filter((s) => s.type === "cta")
             .map((section, idx) => {
-              const s = section as Extract<Section, { type: "cta" }>;
-              return (
-                <div
-                  key={`cta-${idx}`}
-                  className="border border-yellow-900/70 rounded-2xl bg-gradient-to-r from-[#241707] via-black to-[#120806] px-5 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
-                >
-                  <div>
-                    <h3 className="text-sm md:text-base font-semibold text-yellow-100">
-                      {s.title}
-                    </h3>
-                    <p className="text-[11px] md:text-xs text-yellow-200/80 mt-1 max-w-md">
-                      {s.text}
-                    </p>
-                  </div>
-
-                  <button className="self-start md:self-auto rounded-xl px-4 py-2 bg-yellow-400 text-black text-xs font-semibold shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:bg-yellow-300 active:scale-[0.97] transition">
-                    {s.buttonLabel}
-                  </button>
-                </div>
-              );
-            })}
-        </section>
-      </div>
-    </div>
-  );
-}
+              const s = section as Extract<Section, { t
