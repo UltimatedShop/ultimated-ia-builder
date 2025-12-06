@@ -2,79 +2,107 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+export const runtime = "nodejs"; // sécurité, évite certains bugs edge
 
 export async function POST(req: NextRequest) {
   try {
     if (!process.env.OPENAI_API_KEY) {
+      console.error("❌ OPENAI_API_KEY manquante dans Vercel");
       return NextResponse.json(
-        { error: "missing_api_key" },
+        {
+          error: "OPENAI_API_KEY manquante",
+          details:
+            "Ajoute ta clé secrète sk-... dans Vercel (Environment Variables) en PROD et redeploie.",
+        },
         { status: 500 }
       );
     }
 
-    const { prompt, mode } = await req.json();
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const body = await req.json().catch(() => ({}));
+    const prompt = body?.prompt;
+    const mode = body?.mode;
 
     if (!prompt || typeof prompt !== "string") {
       return NextResponse.json(
-        { error: "missing_prompt" },
+        { error: "Prompt manquant", details: "Envoie un texte valide." },
         { status: 400 }
       );
     }
 
-    // Prompt système pour forcer un HTML propre et autonome
     const fullPrompt = `
 Tu es "Ultimated Builder IA", une IA qui génère des sites web complets en HTML.
 
 RÔLE :
-- Générer un site d'une page (one-page) en HTML + CSS inline (ou petites <style>).
-- Le style doit être moderne, sombre, léger, avec des touches de doré (luxe).
-- Ne renvoie QUE du code HTML (pas de texte explicatif en dehors des balises).
-- N'ajoute PAS de balises <html>, <head> ou <body>. Juste le contenu principal.
-- Inclure : un header, une section héros, sections infos, call-to-action, footer.
+- Générer un site d'une page (one-page) en HTML.
+- Style moderne, sombre, luxe, touches dorées.
+- Ne renvoie QUE du code HTML (aucun texte hors balises).
+- Pas de <html>, <head> ou <body>, juste le contenu principal.
+- Inclure : header, héros, sections, CTA, footer.
 
 DESCRIPTION UTILISATEUR :
 "${prompt}"
 
-MODE : ${mode === "assistant" ? "Met un peu plus de texte explicatif et des FAQ." : "Concentre-toi sur un site clair qui pourrait être utilisé tel quel."}
+MODE : ${
+      mode === "assistant"
+        ? "Met un peu plus de texte explicatif et des FAQ."
+        : "Concentre-toi sur un site clair prêt à être utilisé."
+    }
     `.trim();
 
-    const response: any = await client.responses.create({
+    const response = await client.responses.create({
       model: "gpt-5.1",
       input: fullPrompt,
     });
 
-    // Extraction du texte (adapté au nouveau schema Responses)
     let html = "";
     try {
-      const firstOutput = response.output[0];
-      const firstContent = firstOutput.content[0];
-      if (typeof firstContent.text === "string") {
+      const firstOutput: any = response.output?.[0];
+      const firstContent: any = firstOutput?.content?.[0];
+
+      if (typeof firstContent?.text === "string") {
         html = firstContent.text;
-      } else if (firstContent.text?.value) {
+      } else if (firstContent?.text?.value) {
         html = firstContent.text.value;
       } else {
-        html = String(firstContent);
+        html = String(firstContent ?? "");
       }
-    } catch {
-      html = "";
+    } catch (e) {
+      console.error("❌ Erreur extraction HTML:", e);
     }
 
     if (!html) {
+      console.error("❌ Réponse OpenAI vide ou illisible:", response);
       return NextResponse.json(
-        { error: "empty_response" },
+        {
+          error: "Réponse vide",
+          details:
+            "OpenAI a répondu mais le texte est vide. Vérifie le modèle ou le format.",
+        },
         { status: 500 }
       );
     }
 
     return NextResponse.json({ html });
   } catch (err: any) {
-    console.error("Erreur OpenAI:", err);
+    console.error("❌ Erreur OpenAI brute:", err);
+
+    const status = err?.status ?? 500;
+    const message =
+      err?.error?.message ||
+      err?.message ||
+      "Erreur inconnue côté OpenAI ou serveur.";
+
     return NextResponse.json(
-      { error: "openai_error", details: String(err?.message || err) },
-      { status: 500 }
+      {
+        error: "Erreur OpenAI / serveur",
+        details: message,
+        statusCode: status,
+      },
+      { status }
     );
   }
 }
