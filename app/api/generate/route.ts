@@ -1,32 +1,31 @@
 // app/api/generate/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    // 1) Vérif clé
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      console.error("❌ OPENAI_API_KEY manquante dans Vercel");
+      console.error("❌ OPENAI_API_KEY manquante");
       return NextResponse.json(
         {
-          error: "OPENAI_API_KEY manquante dans Vercel.",
+          error: "OPENAI_API_KEY manquante.",
           details:
-            "Ajoute ta clé secrète sk-... dans Vercel (OPENAI_API_KEY) et redeploie.",
+            "Ajoute ta clé sk-... dans Vercel (OPENAI_API_KEY) en Production puis redeploie.",
         },
         { status: 500 }
       );
     }
 
+    // ✅ Import dynamique d'OpenAI, limite les problèmes de bundler/runtime
+    const OpenAI = (await import("openai")).default;
     const client = new OpenAI({ apiKey });
 
-    // 2) Récup prompt + mode
     const body = await req.json().catch(() => ({}));
-    const prompt: string | undefined = body?.prompt;
-    const mode: string | undefined = body?.mode;
+    const prompt: string | undefined = (body as any)?.prompt;
+    const mode: string | undefined = (body as any)?.mode;
 
     if (!prompt || typeof prompt !== "string") {
       return NextResponse.json(
@@ -35,37 +34,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3) Prompt pour GPT-5.1
     const fullPrompt = `
 Tu es "Ultimated Builder IA", une IA qui génère des sites web complets en HTML.
 
-CONTRAINTES IMPORTANTES :
-- Retourne UNIQUEMENT du HTML (aucun texte en dehors des balises).
-- Ne mets PAS de balises <html>, <head> ou <body>, seulement le contenu principal.
-- Le site est une one-page moderne, sombre, luxe, avec touches dorées.
-- Inclure au minimum : header, section héros, sections contenu, section produits / services, call-to-action, footer.
-- Utilise des classes HTML génériques (container, section, button...) et un peu de style inline si nécessaire.
+CONTRAINTES :
+- Retourne UNIQUEMENT du HTML (aucun texte hors balises).
+- Pas de <html>, <head> ou <body>, seulement le contenu principal.
+- One-page moderne, sombre, luxe, avec touches dorées.
+- Sections minimum : header, héros, sections contenu, section produits/services, call-to-action, footer.
 
-DESCRIPTION UTILISATEUR À RESPECTER :
+DESCRIPTION UTILISATEUR :
 "${prompt}"
 
 MODE : ${
       mode === "assistant"
-        ? "Ajoute une FAQ et un peu de texte explicatif pour aider l'utilisateur."
-        : "Reste simple et clair, orienté design, prêt à être utilisé."
+        ? "Ajoute une FAQ et un peu plus de texte explicatif."
+        : "Reste simple, clair et prêt à être utilisé."
     }
     `.trim();
 
-    // 4) Appel OpenAI (nouvelle API Responses)
     const response = await client.responses.create({
       model: "gpt-5.1",
       input: fullPrompt,
     });
 
-    // 5) Extraction du HTML retourné
     let html = "";
     try {
-      const firstOutput: any = response.output?.[0];
+      const firstOutput: any = (response as any).output?.[0];
       const firstContent: any = firstOutput?.content?.[0];
 
       if (typeof firstContent?.text === "string") {
@@ -91,23 +86,15 @@ MODE : ${
       );
     }
 
-    // 6) Réponse OK
     return NextResponse.json({ html });
   } catch (err: any) {
-    console.error("❌ Erreur globale route /api/generate:", err);
-
-    const status = err?.status ?? 500;
-    const message =
-      err?.error?.message ||
-      err?.message ||
-      "Erreur inconnue côté serveur ou OpenAI.";
-
+    console.error("❌ Erreur globale /api/generate:", err);
     return NextResponse.json(
       {
         error: "Erreur OpenAI / serveur.",
-        details: message,
+        details: String(err?.message || err),
       },
-      { status }
+      { status: 500 }
     );
   }
 }
