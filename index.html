@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ultimated IA Builder</title>
 
-  <!-- Optionnel : typo plus luxe -->
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&display=swap"
     rel="stylesheet"
@@ -43,7 +42,21 @@
       max-width: 1120px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 14px;
+    }
+
+    .logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .logo-wrap img {
+      max-width: 220px;
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 14px 30px rgba(0, 0, 0, 0.85));
     }
 
     .brand {
@@ -86,7 +99,6 @@
     }
 
     .card::before {
-      /* léger highlight intérieur */
       content: "";
       position: absolute;
       inset: 1px;
@@ -374,6 +386,10 @@
 </head>
 <body>
   <div class="shell">
+    <div class="logo-wrap">
+      <img src="uid-logo.png" alt="UID — Ultimated Builder IA" />
+    </div>
+
     <div class="brand">
       From the House of <span>Ultimated Studio Officiel</span>
     </div>
