@@ -26,8 +26,14 @@ export type GeneratedConfig = {
   sections: Section[];
 };
 
-export function GeneratedSitePreview({ config }: { config: GeneratedConfig | null }) {
-  // État par défaut quand rien n’est encore généré
+export function GeneratedSitePreview({
+  config,
+}: {
+  config: GeneratedConfig | null;
+}) {
+  // ————————————————
+  // 1) AUCUN SITE GÉNÉRÉ → MODE ATTENTE
+  // ————————————————
   if (!config) {
     return (
       <div className="h-full w-full rounded-2xl border border-yellow-900/60 bg-gradient-to-br from-black via-[#090707] to-[#140d06] shadow-[0_20px_40px_rgba(0,0,0,0.85)] flex flex-col items-center justify-center text-center px-6">
@@ -40,15 +46,18 @@ export function GeneratedSitePreview({ config }: { config: GeneratedConfig | nul
         <p className="text-xs md:text-sm text-yellow-300/80 max-w-md">
           Écris ton idée de site à gauche puis clique sur{" "}
           <span className="font-semibold">“GÉNÉRER MON SITE”</span>. Cette zone
-          affichera une version visuelle de ton site, en mode luxe Ultimated.
+          affichera une version visuelle luxe Ultimated.
         </p>
       </div>
     );
   }
 
+  // ————————————————
+  // 2) MODE AVEC SITE GÉNÉRÉ
+  // ————————————————
   return (
     <div className="h-full w-full rounded-2xl border border-yellow-900/70 bg-gradient-to-b from-black via-[#050305] to-[#120a05] shadow-[0_22px_45px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
-      {/* Hero */}
+      {/* HERO */}
       <div className="px-6 md:px-8 pt-6 pb-5 border-b border-yellow-900/60 bg-gradient-to-r from-black via-[#1a1307] to-black">
         <p className="text-[10px] uppercase tracking-[0.3em] text-yellow-500/80 mb-1">
           Site généré — Aperçu
@@ -67,15 +76,23 @@ export function GeneratedSitePreview({ config }: { config: GeneratedConfig | nul
         </div>
       </div>
 
-      {/* Contenu scrollable */}
+      {/* CONTENU SCROLLABLE */}
       <div className="flex-1 overflow-auto px-6 md:px-8 py-5 space-y-6">
+
+        {/* ——————————————————————————————— */}
+        {/* SECTION: FEATURES */}
+        {/* ——————————————————————————————— */}
         {config.sections.map((section, idx) => {
           if (section.type === "features") {
             return (
-              <div key={idx} className="border border-yellow-900/60 rounded-2xl bg-black/50 px-4 py-4">
+              <div
+                key={idx}
+                className="border border-yellow-900/60 rounded-2xl bg-black/50 px-4 py-4"
+              >
                 <h3 className="text-sm md:text-base font-semibold text-yellow-100 mb-3">
                   {section.title}
                 </h3>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {section.items.map((item, i) => (
                     <div
@@ -88,6 +105,7 @@ export function GeneratedSitePreview({ config }: { config: GeneratedConfig | nul
                           {item.label}
                         </span>
                       </div>
+
                       <p className="text-[11px] text-yellow-300/80 mt-1">
                         {item.description}
                       </p>
@@ -98,6 +116,9 @@ export function GeneratedSitePreview({ config }: { config: GeneratedConfig | nul
             );
           }
 
+          {/* ——————————————————————————————— */}
+          {/* SECTION: CALL TO ACTION */}
+          {/* ——————————————————————————————— */}
           if (section.type === "cta") {
             return (
               <div
@@ -112,6 +133,7 @@ export function GeneratedSitePreview({ config }: { config: GeneratedConfig | nul
                     {section.text}
                   </p>
                 </div>
+
                 <button className="self-start md:self-auto rounded-xl px-4 py-2 bg-yellow-400 text-black text-xs font-semibold shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:bg-yellow-300 active:scale-[0.97] transition">
                   {section.buttonLabel}
                 </button>
@@ -121,6 +143,7 @@ export function GeneratedSitePreview({ config }: { config: GeneratedConfig | nul
 
           return null;
         })}
+
       </div>
     </div>
   );
