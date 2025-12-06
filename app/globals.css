@@ -1,0 +1,172 @@
+/* app/globals.css */
+
+:root {
+  --bg-body: #050506;
+  --bg-panel: rgba(10, 10, 12, 0.96);
+  --gold: #f4d189;
+  --gold-soft: #d1b26a;
+  --text-body: #f5f5f5;
+  --text-muted: #8e8e95;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-body);
+}
+
+/* BG général */
+.bg-body {
+  background-color: var(--bg-body);
+}
+
+.bg-gradient-radial {
+  background:
+    radial-gradient(circle at top, rgba(244, 209, 137, 0.14), transparent 55%),
+    radial-gradient(circle at bottom, rgba(10, 10, 10, 0.9), #020203 60%);
+}
+
+/* Texte */
+.text-body {
+  color: var(--text-body);
+}
+.text-muted {
+  color: var(--text-muted);
+}
+.text-gold {
+  color: var(--gold);
+}
+.text-goldSoft {
+  color: var(--gold-soft);
+}
+
+/* Panel */
+.panel {
+  border-radius: 1.25rem;
+  background: radial-gradient(circle at top left, #15120c, #050506 55%);
+  border: 1px solid rgba(212, 184, 120, 0.22);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
+  padding: 1.5rem;
+}
+
+/* Textarea */
+.textarea {
+  width: 100%;
+  border-radius: 0.9rem;
+  padding: 0.85rem 0.9rem;
+  background: rgba(5, 5, 7, 0.92);
+  border: 1px solid rgba(120, 95, 44, 0.6);
+  color: var(--text-body);
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 150px;
+  outline: none;
+}
+
+.textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(244, 209, 137, 0.4);
+}
+
+.helper-text {
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.45rem;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.65rem;
+}
+
+/* Chips */
+.chip {
+  border-radius: 999px;
+  border: 1px solid rgba(209, 178, 106, 0.6);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.7rem;
+  color: var(--gold-soft);
+  background: rgba(10, 10, 12, 0.95);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.chip:hover {
+  background: rgba(244, 209, 137, 0.08);
+}
+
+/* Bouton principal */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.65rem 1.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: radial-gradient(circle at top left, #f8e3a6, #e2b75f);
+  color: #1a1204;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Preview frame */
+.preview-frame {
+  border-radius: 1rem;
+  border: 1px solid rgba(120, 95, 44, 0.7);
+  background: radial-gradient(circle at top left, #17120d, #040404 55%);
+  min-height: 260px;
+  padding: 0.75rem;
+}
+
+/* Mode toggle */
+.mode-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(209, 178, 106, 0.4);
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  background: rgba(5, 5, 7, 0.92);
+}
+
+.mode-pill-active {
+  color: var(--gold);
+  border-color: rgba(244, 209, 137, 0.9);
+  box-shadow: 0 0 15px rgba(244, 209, 137, 0.25);
+}
+
+/* Live dot */
+.shadow-live {
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+}
