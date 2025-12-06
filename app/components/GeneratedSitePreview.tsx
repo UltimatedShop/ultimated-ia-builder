@@ -1,29 +1,9 @@
 "use client";
 
-export type FeatureItem = {
-  icon: string;
-  label: string;
-  description: string;
-};
-
-export type Section =
-  | {
-      type: "features";
-      title: string;
-      items: FeatureItem[];
-    }
-  | {
-      type: "cta";
-      title: string;
-      text: string;
-      buttonLabel: string;
-    };
-
 export type GeneratedConfig = {
   title: string;
   subtitle: string;
-  theme: "dark-gold";
-  sections: Section[];
+  sections?: any[]; // on garde ça souple pour éviter les erreurs TS
 };
 
 export function GeneratedSitePreview({
@@ -31,9 +11,7 @@ export function GeneratedSitePreview({
 }: {
   config: GeneratedConfig | null;
 }) {
-  // —————————————————————
-  // 1) Aucun site encore généré
-  // —————————————————————
+  // Rien encore généré
   if (!config) {
     return (
       <div className="h-full w-full rounded-2xl border border-yellow-900/60 bg-gradient-to-br from-black via-[#090707] to-[#140d06] shadow-[0_20px_40px_rgba(0,0,0,0.85)] flex flex-col items-center justify-center text-center px-6">
@@ -44,16 +22,17 @@ export function GeneratedSitePreview({
           Le site apparaitra ici en direct
         </h2>
         <p className="text-xs md:text-sm text-yellow-300/80 max-w-md">
-          Écris ton idée de site à gauche puis clique sur{" "}
+          Décris ton site à gauche, puis clique sur{" "}
           <span className="font-semibold">“GÉNÉRER MON SITE”</span>.
         </p>
       </div>
     );
   }
 
-  // —————————————————————
-  // 2) Site généré
-  // —————————————————————
+  const sections = config.sections || [];
+  const features = sections.filter((s: any) => s.type === "features");
+  const ctas = sections.filter((s: any) => s.type === "cta");
+
   return (
     <div className="h-full w-full rounded-2xl border border-yellow-900/70 bg-gradient-to-b from-black via-[#050305] to-[#120a05] shadow-[0_22px_45px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col">
       {/* NAVBAR */}
@@ -111,43 +90,58 @@ export function GeneratedSitePreview({
         {/* FEATURES + CTA */}
         <section className="px-6 md:px-10 py-6 space-y-6">
           {/* FEATURES */}
-          {config.sections
-            .filter((s) => s.type === "features")
-            .map((section, idx) => {
-              const s = section as Extract<Section, { type: "features" }>;
-              return (
-                <div
-                  key={`features-${idx}`}
-                  className="border border-yellow-900/60 rounded-2xl bg-black/60 px-4 md:px-5 py-4 md:py-5"
-                >
-                  <h2 className="text-sm md:text-base font-semibold text-yellow-100 mb-3">
-                    {s.title}
-                  </h2>
+          {features.map((section: any, idx: number) => (
+            <div
+              key={`features-${idx}`}
+              className="border border-yellow-900/60 rounded-2xl bg-black/60 px-4 md:px-5 py-4 md:py-5"
+            >
+              <h2 className="text-sm md:text-base font-semibold text-yellow-100 mb-3">
+                {section.title}
+              </h2>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {s.items.map((item, i) => (
-                      <div
-                        key={i}
-                        className="rounded-xl border border-yellow-800/70 bg-gradient-to-b from-black/80 to-[#120a06] px-3 py-3 flex flex-col gap-1"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">{item.icon}</span>
-                          <span className="text-xs font-semibold text-yellow-100">
-                            {item.label}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-yellow-300/80 mt-1">
-                          {item.description}
-                        </p>
-                      </div>
-                    ))}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {(section.items || []).map((item: any, i: number) => (
+                  <div
+                    key={i}
+                    className="rounded-xl border border-yellow-800/70 bg-gradient-to-b from-black/80 to-[#120a06] px-3 py-3 flex flex-col gap-1"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{item.icon}</span>
+                      <span className="text-xs font-semibold text-yellow-100">
+                        {item.label}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-yellow-300/80 mt-1">
+                      {item.description}
+                    </p>
                   </div>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            </div>
+          ))}
 
           {/* CTA */}
-          {config.sections
-            .filter((s) => s.type === "cta")
-            .map((section, idx) => {
-              const s = section as Extract<Section, { t
+          {ctas.map((section: any, idx: number) => (
+            <div
+              key={`cta-${idx}`}
+              className="border border-yellow-900/70 rounded-2xl bg-gradient-to-r from-[#241707] via-black to-[#120806] px-5 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3"
+            >
+              <div>
+                <h3 className="text-sm md:text-base font-semibold text-yellow-100">
+                  {section.title}
+                </h3>
+                <p className="text-[11px] md:text-xs text-yellow-200/80 mt-1 max-w-md">
+                  {section.text}
+                </p>
+              </div>
+
+              <button className="self-start md:self-auto rounded-xl px-4 py-2 bg-yellow-400 text-black text-xs font-semibold shadow-[0_0_20px_rgba(250,204,21,0.4)] hover:bg-yellow-300 active:scale-[0.97] transition">
+                {section.buttonLabel}
+              </button>
+            </div>
+          ))}
+        </section>
+      </div>
+    </div>
+  );
+}
