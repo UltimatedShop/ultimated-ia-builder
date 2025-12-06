@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ultimated IA Builder</title>
+  <title>Ultimated Builder IA</title>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&display=swap"
@@ -15,7 +15,10 @@
       --gold1: #d7b75b;
       --gold2: #f3e0a3;
       --gold3: #f7c96a;
-      --bg: #050507;
+      --ink: #050507;
+      --surface: #111119;
+      --surface-soft: #181822;
+      --chip: #222230;
     }
 
     * {
@@ -29,37 +32,73 @@
         "SF Pro Text", Arial, sans-serif;
       background:
         radial-gradient(circle at top, #2a2113 0, transparent 55%),
-        radial-gradient(circle at bottom, #0b0b0c 0, #020203 70%);
+        radial-gradient(circle at bottom, #06060a 0, #010103 70%);
       color: #f5f5f5;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: stretch;
       padding: 32px 16px;
     }
 
     .page {
       width: 100%;
-      max-width: 1100px;
+      max-width: 1120px;
+      margin: auto;
       display: flex;
       flex-direction: column;
       gap: 24px;
     }
 
-    .hero-top {
+    /* Top "nav" très light façon Base44 */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.86rem;
+      color: #d1d1d1;
+      opacity: 0.9;
+    }
+
+    .brand-left {
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+    }
+
+    .brand-left span {
+      color: var(--gold2);
+    }
+
+    .top-links {
+      display: flex;
+      gap: 18px;
+      font-size: 0.8rem;
+      color: #a5a5a5;
+    }
+
+    .top-links span {
+      cursor: default;
+    }
+
+    /* Hero titre + sous-titre */
+
+    .hero {
       text-align: center;
+      margin-top: 12px;
     }
 
     .hero-eyebrow {
-      letter-spacing: 0.22em;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      font-size: 0.7rem;
-      color: #a3a3a3;
-      margin-bottom: 4px;
+      letter-spacing: 0.26em;
+      color: #9b9b9b;
+      margin-bottom: 6px;
     }
 
     .hero-title {
       font-family: "Playfair Display", "Times New Roman", serif;
-      font-size: 2.1rem;
+      font-size: 2.3rem;
       margin-bottom: 6px;
     }
 
@@ -75,11 +114,18 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      animation: heroGlow 7s ease-in-out infinite;
+    }
+
+    @keyframes heroGlow {
+      0% { text-shadow: 0 0 5px rgba(247, 201, 106, 0.1); }
+      50% { text-shadow: 0 0 18px rgba(243, 224, 163, 0.5); }
+      100% { text-shadow: 0 0 5px rgba(247, 201, 106, 0.1); }
     }
 
     .hero-sub {
-      font-size: 0.98rem;
-      color: #d0d0d0;
+      font-size: 0.96rem;
+      color: #d4d4d4;
       max-width: 640px;
       margin: 0 auto;
     }
@@ -89,134 +135,110 @@
       font-weight: 500;
     }
 
-    .layout {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
+    /* Bloc central façon Base44 */
 
-    @media (min-width: 960px) {
-      .layout {
-        flex-direction: row;
-        align-items: flex-start;
-      }
-    }
-
-    .card {
+    .shell {
+      margin-top: 20px;
       background:
-        radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 55%),
-        linear-gradient(135deg, rgba(11, 11, 12, 0.96), rgba(3, 3, 3, 0.98));
-      border-radius: 22px;
-      border: 1px solid rgba(215, 183, 91, 0.45);
+        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 60%),
+        linear-gradient(180deg, #101019 0, #050509 100%);
+      border-radius: 26px;
+      padding: 28px 26px 22px;
       box-shadow:
-        0 24px 60px rgba(0, 0, 0, 0.85),
-        0 0 0 1px rgba(0, 0, 0, 0.7);
-      padding: 22px 22px 20px;
-      position: relative;
-      overflow: hidden;
+        0 30px 80px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0,0,0,0.8);
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 1px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
-      pointer-events: none;
-    }
-
-    .card-main {
-      flex: 1.6;
-    }
-    .card-main-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .card-support {
-      flex: 1;
-    }
-    .card-support-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    @media (min-width: 960px) {
-      .card-main {
-        padding: 24px 26px 20px;
-      }
-      .card-support {
-        padding: 20px 20px 18px;
-      }
-    }
-
-    .input-row {
+    .prompt-row {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
-    .input-label {
-      font-size: 0.85rem;
-      color: #cfcfcf;
-      text-align: left;
-    }
-
-    .input-zone {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    @media (min-width: 800px) {
-      .input-zone {
+    @media (min-width: 900px) {
+      .prompt-row {
         flex-direction: row;
         align-items: stretch;
       }
     }
 
-    textarea {
+    .prompt-box {
       flex: 1;
-      resize: vertical;
-      min-height: 150px;
-      padding: 14px 14px;
-      border-radius: 16px;
-      border: 1px solid #333;
-      background: rgba(5, 5, 5, 0.96);
+      background: #050507;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 18px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prompt-input-wrap {
+      flex: 1;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #050507;
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      padding: 14px 16px;
+      border: none;
+      outline: none;
+      resize: none;
+      background: #050507;
       color: #f5f5f5;
       font-size: 0.92rem;
-      outline: none;
-      line-height: 1.45;
-      transition:
-        border 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease,
-        transform 0.2s ease;
+      line-height: 1.5;
     }
 
     textarea::placeholder {
-      color: #7d7d7d;
+      color: #777;
     }
 
     textarea:focus {
-      border-color: var(--gold1);
-      background: #050505;
       box-shadow:
-        0 0 0 1px rgba(215, 183, 91, 0.5),
-        0 18px 34px rgba(0, 0, 0, 0.85);
-      transform: translateY(-1px);
+        0 0 0 1px rgba(215, 183, 91, 0.65),
+        0 18px 32px rgba(0, 0, 0, 0.9);
+    }
+
+    .prompt-hint-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.78rem;
+      color: #a5a5a5;
+    }
+
+    .prompt-hint-row span {
+      color: var(--gold2);
+    }
+
+    .model-pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.74rem;
+      color: #d3d3d3;
     }
 
     .button-wrap {
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto;
       display: flex;
-      justify-content: flex-start;
       align-items: center;
+      justify-content: center;
     }
 
-    @media (min-width: 800px) {
+    @media (min-width: 900px) {
       .button-wrap {
-        justify-content: center;
-        width: 220px;
+        margin: 0;
+        justify-content: flex-end;
       }
     }
 
@@ -235,12 +257,12 @@
       font-weight: 600;
       font-size: 0.86rem;
       text-transform: uppercase;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.16em;
       cursor: pointer;
-      padding: 11px 26px;
+      padding: 13px 30px;
       box-shadow:
-        0 18px 32px rgba(0, 0, 0, 0.82),
-        0 0 0 1px rgba(0, 0, 0, 0.7);
+        0 20px 40px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0,0,0,0.7);
       transition:
         transform 0.15s ease,
         box-shadow 0.15s ease,
@@ -252,142 +274,67 @@
       transform: translateY(-1px);
       filter: brightness(1.03);
       box-shadow:
-        0 24px 44px rgba(0, 0, 0, 0.88),
+        0 24px 50px rgba(0, 0, 0, 0.95),
         0 0 0 1px rgba(215, 183, 91, 0.7);
     }
 
     button:active {
-      transform: translateY(1px);
+      transform: translateY(0);
       box-shadow:
-        0 12px 24px rgba(0, 0, 0, 0.85),
-        0 0 0 1px rgba(215, 183, 91, 0.5);
+        0 14px 28px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(215, 183, 91, 0.55);
     }
 
-    .hint {
+    /* Chips idées */
+
+    .ideas-row {
+      margin-top: 18px;
+    }
+
+    .ideas-label {
       font-size: 0.8rem;
-      color: #a3a3a3;
+      color: #bfbfbf;
+      margin-bottom: 8px;
     }
 
-    .hint span {
-      color: var(--gold2);
-    }
-
-    .file-row {
+    .chips {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
       gap: 8px;
-      margin-top: 4px;
-      font-size: 0.8rem;
-      color: #c0c0c0;
     }
 
-    .file-row input[type="file"] {
-      font-size: 0.78rem;
-    }
-
-    .file-badge {
-      padding: 2px 8px;
+    .chip {
+      padding: 7px 13px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      max-width: 210px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      background: var(--chip);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.78rem;
+      color: #e4e4e4;
+      cursor: default;
     }
 
-    .file-note {
-      font-size: 0.75rem;
-      color: #8d8d8d;
-      margin-top: 2px;
-    }
-
-    .result-title {
-      margin-top: 14px;
-      font-size: 0.82rem;
-      color: #c8c8c8;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-    }
+    /* Résultat */
 
     .result {
-      margin-top: 8px;
-      border-radius: 18px;
-      padding: 15px 15px 18px;
-      background: radial-gradient(
-        circle at top left,
-        #18110a 0,
-        #050505 55%
-      );
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      color: #e8e8e8;
-      text-align: left;
+      margin-top: 20px;
+      border-radius: 22px;
+      padding: 16px 18px 20px;
+      background: radial-gradient(circle at top left, #181118 0, #050507 60%);
+      border: 1px solid rgba(255,255,255,0.05);
       font-size: 0.9rem;
       max-height: 360px;
       overflow: auto;
       white-space: pre-wrap;
+      color: #f0f0f0;
     }
 
     .result.empty {
       border-style: dashed;
-      opacity: 0.7;
+      color: #a3a3a3;
+      text-align: left;
     }
 
-    .support-title {
-      font-family: "Playfair Display", "Times New Roman", serif;
-      font-size: 1.15rem;
-      margin-bottom: 4px;
-    }
-
-    .support-sub {
-      font-size: 0.8rem;
-      color: #c8c8c8;
-      margin-bottom: 10px;
-    }
-
-    .support-tip {
-      font-size: 0.78rem;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 12px;
-      padding: 8px 10px;
-      margin-bottom: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .chat-log {
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 12px;
-      padding: 9px 10px;
-      font-size: 0.78rem;
-      max-height: 200px;
-      overflow: auto;
-      margin-bottom: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      white-space: pre-wrap;
-    }
-
-    .chat-input {
-      width: 100%;
-      padding: 8px 11px;
-      border-radius: 999px;
-      border: 1px solid #343434;
-      background: rgba(9, 9, 9, 0.97);
-      color: #f5f5f5;
-      font-size: 0.8rem;
-      outline: none;
-      margin-bottom: 6px;
-    }
-
-    .chat-input:focus {
-      border-color: var(--gold1);
-    }
-
-    .chat-send {
-      width: 100%;
-      font-size: 0.78rem;
-      padding: 8px 14px;
-    }
+    /* Footer */
 
     .footer {
       text-align: center;
@@ -395,7 +342,7 @@
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #8a8a8a;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .footer span {
@@ -405,99 +352,80 @@
 </head>
 <body>
   <div class="page">
-    <div class="hero-top">
-      <div class="hero-eyebrow">Studio interne • Outil personnel</div>
-      <div class="hero-title">
-        <span>Que veux-tu construire aujourd’hui&nbsp;?</span>
+    <!-- topbar -->
+    <div class="topbar">
+      <div class="brand-left">
+        ULTIMATED <span>BUILDER IA</span>
       </div>
-      <div class="hero-sub">
-        Décris simplement le site que tu veux créer, et
-        <strong>Ultimated IA Builder</strong> te renvoie une structure complète :
-        sections, textes de base, idées de layout, CTA…
+      <div class="top-links">
+        <span>Outils internes</span>
+        <span>Templates</span>
+        <span>Notes</span>
       </div>
     </div>
 
-    <div class="layout">
-      <!-- Bloc builder -->
-      <div class="card card-main">
-        <div class="card-main-inner">
-          <div class="input-row">
-            <div class="input-label">Décris ton site (idée, style, cible, etc.) :</div>
+    <!-- hero -->
+    <div class="hero">
+      <div class="hero-eyebrow">Outil perso • Ultimated Studio</div>
+      <div class="hero-title">
+        <span>Ultimated Builder IA</span>
+      </div>
+      <div class="hero-sub">
+        Décris le type de site que tu veux et l’IA te renvoie une
+        <strong>structure prête à designer</strong> : sections, textes de base,
+        idées de layout et CTA.
+      </div>
+    </div>
 
-            <div class="input-zone">
-              <textarea
-                id="userInput"
-                placeholder="Exemples : 
-- Plateforme bancaire noire & or avec dashboard premium
-- Site crypto futuriste avec sections gains/risques
+    <!-- bloc façon Base44 -->
+    <div class="shell">
+      <div class="prompt-row">
+        <div class="prompt-box">
+          <div class="prompt-input-wrap">
+            <textarea
+              id="userInput"
+              placeholder="Exemples :
+- Plateforme bancaire ultra luxe noire & or, avec dashboard client
+- Site crypto futuriste avec sections gains / risques / FAQ
 - Boutique en ligne minimaliste pour montres de luxe"
-              ></textarea>
-
-              <div class="button-wrap">
-                <button onclick="generate()">Générer mon site</button>
-              </div>
-            </div>
-
-            <div class="hint">
-              Appuie sur <span>Entrée</span> dans la zone de texte pour générer (raccourci rapide),
-              ou clique sur le bouton.
-            </div>
-
-            <div class="file-row">
-              <span>Image de référence (maquette, screenshot) :</span>
-              <input type="file" id="imageInput" accept="image/*" />
-              <div id="fileInfo" class="file-badge" style="display:none;"></div>
-            </div>
-
-            <div class="file-note">
-              L’image sera utilisée plus tard avec la vision. Pour l’instant, la génération se base
-              surtout sur ton texte.
-            </div>
+            ></textarea>
           </div>
-
-          <div class="result-title">Structure proposée par l’IA</div>
-          <div id="result" class="result empty">
-            La structure générée du site apparaîtra ici (sections, titres, FAQ, CTA…)
+          <div class="prompt-hint-row">
+            <div>
+              Appuie sur <span>Entrée</span> pour générer (ou utilise le bouton).
+            </div>
+            <div class="model-pill">✨ GPT-5.1 (via API)</div>
           </div>
+        </div>
+
+        <div class="button-wrap">
+          <button onclick="generate()">Générer mon site</button>
         </div>
       </div>
 
-      <!-- Bloc support IA -->
-      <div class="card card-support">
-        <div class="card-support-inner">
-          <div class="support-title">Support IA — Ultimated</div>
-          <div class="support-sub">
-            Pose une question pendant que tu construis (texte, UX, stratégie, idées de sections…).
-          </div>
-
-          <div class="support-tip">
-            💡 Astuce : <br />
-            « Comment rendre la page d’accueil de ce site bancaire plus premium ? »<br />
-            « Donne-moi 3 slogans pour une landing crypto noire & or. »
-          </div>
-
-          <div id="chatLog" class="chat-log">
-💬 Envoie ta première question à l’assistant Ultimated pour t’aider à affiner ton site.
-          </div>
-
-          <input
-            id="chatInput"
-            class="chat-input"
-            placeholder="Pose ta question à l'assistant Ultimated…"
-          />
-          <button class="chat-send" onclick="sendSupport()">Envoyer au support IA</button>
+      <div class="ideas-row">
+        <div class="ideas-label">Idées pour démarrer</div>
+        <div class="chips">
+          <div class="chip">Plateforme bancaire</div>
+          <div class="chip">Dashboard crypto</div>
+          <div class="chip">Boutique de luxe</div>
+          <div class="chip">Agence marketing</div>
+          <div class="chip">Landing SaaS</div>
+          <div class="chip">Espace membre VIP</div>
         </div>
+      </div>
+
+      <div id="result" class="result empty">
+        La structure générée du site apparaîtra ici (sections, titres, textes de base…)
       </div>
     </div>
 
     <div class="footer">
-      From the House of <span>Ultimated Studio Officiel</span>
+      FROM THE HOUSE OF <span>ULTIMATED STUDIO OFFICIEL</span>
     </div>
   </div>
 
   <script>
-    let imageBase64 = null;
-
     const textarea = document.getElementById("userInput");
     const resultDiv = document.getElementById("result");
 
@@ -507,26 +435,6 @@
         e.preventDefault();
         generate();
       }
-    });
-
-    const imageInput = document.getElementById("imageInput");
-    const fileInfo = document.getElementById("fileInfo");
-
-    imageInput.addEventListener("change", () => {
-      const file = imageInput.files[0];
-      if (!file) {
-        imageBase64 = null;
-        fileInfo.style.display = "none";
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        imageBase64 = reader.result; // data:image/...;base64,...
-        fileInfo.textContent = file.name;
-        fileInfo.style.display = "inline-block";
-      };
-      reader.readAsDataURL(file);
     });
 
     async function generate() {
@@ -544,7 +452,7 @@
         const response = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt, image: imageBase64 }),
+          body: JSON.stringify({ prompt }),
         });
 
         const data = await response.json();
@@ -554,33 +462,6 @@
         console.error(err);
         resultDiv.textContent =
           "Erreur réseau ou serveur. Réessaie dans quelques instants.";
-      }
-    }
-
-    // Chat support (backend /api/support à prévoir)
-    async function sendSupport() {
-      const input = document.getElementById("chatInput");
-      const log = document.getElementById("chatLog");
-      const text = input.value.trim();
-      if (!text) return;
-
-      log.innerHTML += "\n\n👤 Toi : " + text;
-      input.value = "";
-      log.scrollTop = log.scrollHeight;
-
-      try {
-        const res = await fetch("/api/support", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: text }),
-        });
-        const data = await res.json();
-        log.innerHTML += "\n\n🤖 IA : " + (data.reply || "Erreur du support.");
-        log.scrollTop = log.scrollHeight;
-      } catch (e) {
-        console.error(e);
-        log.innerHTML +=
-          "\n\n🤖 IA : Erreur réseau, vérifie le serveur ou ta clé API.";
       }
     }
   </script>
