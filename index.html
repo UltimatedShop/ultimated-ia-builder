@@ -6,8 +6,9 @@
   <title>Ultimated IA Builder</title>
   <style>
     :root {
-      --gold: #d4af37;
-      --gold-soft: #f2d47a;
+      --gold1: #d4af37;
+      --gold2: #f6e27a;
+      --gold3: #f1c45c;
       --bg-dark: #050507;
     }
 
@@ -45,7 +46,7 @@
     }
 
     .brand span {
-      color: var(--gold);
+      color: var(--gold1);
     }
 
     .card {
@@ -69,6 +70,22 @@
       }
     }
 
+    /* Animation dégradé or */
+    @keyframes goldGlow {
+      0% {
+        background-position: 0% 50%;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+      }
+      50% {
+        background-position: 100% 50%;
+        text-shadow: 0 0 18px rgba(246, 226, 122, 0.45);
+      }
+      100% {
+        background-position: 0% 50%;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+      }
+    }
+
     .title {
       text-align: center;
       font-size: 1.9rem;
@@ -77,10 +94,18 @@
     }
 
     .title span {
-      background: linear-gradient(120deg, var(--gold), var(--gold-soft));
+      background: linear-gradient(
+        120deg,
+        var(--gold1),
+        var(--gold2),
+        var(--gold3),
+        var(--gold1)
+      );
+      background-size: 220% 220%;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      animation: goldGlow 6s ease-in-out infinite;
     }
 
     .subtitle {
@@ -91,7 +116,7 @@
     }
 
     .subtitle strong {
-      color: var(--gold-soft);
+      color: var(--gold2);
       font-weight: 500;
     }
 
@@ -120,7 +145,11 @@
       color: #f5f5f5;
       font-size: 0.95rem;
       outline: none;
-      transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      transition:
+        border 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
     }
 
     textarea::placeholder {
@@ -128,9 +157,12 @@
     }
 
     textarea:focus {
-      border-color: var(--gold);
+      border-color: var(--gold1);
       background: #050505;
-      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.5);
+      box-shadow:
+        0 0 0 1px rgba(212, 175, 55, 0.5),
+        0 16px 30px rgba(0, 0, 0, 0.75);
+      transform: translateY(-1px);
     }
 
     .button-wrap {
@@ -144,10 +176,17 @@
       max-width: 240px;
       border-radius: 999px;
       border: none;
-      background: linear-gradient(120deg, var(--gold), #f9e188);
+      background: linear-gradient(
+        120deg,
+        var(--gold1),
+        var(--gold2),
+        var(--gold3),
+        var(--gold1)
+      );
+      background-size: 240% 240%;
       color: #111;
       font-weight: 600;
-      font-size: 0.98rem;
+      font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.14em;
       cursor: pointer;
@@ -155,17 +194,20 @@
       box-shadow:
         0 16px 30px rgba(0, 0, 0, 0.7),
         0 0 0 1px rgba(0, 0, 0, 0.6);
-      transition: transform 0.15s ease, box-shadow 0.15s ease,
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
         filter 0.15s ease;
       white-space: nowrap;
+      animation: goldGlow 5s ease-in-out infinite;
     }
 
     button:hover {
       transform: translateY(-1px);
-      filter: brightness(1.02);
+      filter: brightness(1.03);
       box-shadow:
         0 22px 40px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(212, 175, 55, 0.65);
+        0 0 0 1px rgba(212, 175, 55, 0.75);
     }
 
     button:active {
@@ -204,14 +246,14 @@
     }
 
     .footer span {
-      color: var(--gold);
+      color: var(--gold1);
     }
   </style>
 </head>
 <body>
   <div class="shell">
     <div class="brand">
-      From the House of <span>Ultimated Studio Officiel</span>
+      Ultimated Internal Tool · <span>Prototype IA</span>
     </div>
 
     <div class="card">
@@ -243,7 +285,7 @@
     </div>
 
     <div class="footer">
-      Designed by <span>Ultimated</span> — Prototype interne
+      From the House of <span>Ultimated Studio Officiel</span>
     </div>
   </div>
 
