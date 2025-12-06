@@ -19,6 +19,7 @@
       --surface: #111119;
       --surface-soft: #181822;
       --chip: #222230;
+      --card: #050507;
     }
 
     * {
@@ -49,7 +50,8 @@
       gap: 24px;
     }
 
-    /* Top "nav" très light façon Base44 */
+    /* Topbar */
+
     .topbar {
       display: flex;
       justify-content: space-between;
@@ -81,7 +83,7 @@
       cursor: default;
     }
 
-    /* Hero titre + sous-titre */
+    /* Hero */
 
     .hero {
       text-align: center;
@@ -135,7 +137,7 @@
       font-weight: 500;
     }
 
-    /* Bloc central façon Base44 */
+    /* Bloc prompt façon Base44 */
 
     .shell {
       margin-top: 20px;
@@ -334,6 +336,208 @@
       text-align: left;
     }
 
+    /* SECTION APPS RÉCENTES */
+
+    .recent {
+      margin-top: 26px;
+      background: linear-gradient(180deg, #0b0b10 0, #050507 100%);
+      border-radius: 26px;
+      padding: 20px 22px 18px;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0,0,0,0.7);
+    }
+
+    .recent-header {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #f3f3f3;
+    }
+
+    .recent-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    @media (min-width: 820px) {
+      .recent-row {
+        flex-direction: row;
+      }
+    }
+
+    .recent-card {
+      flex: 1;
+      display: flex;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      align-items: center;
+    }
+
+    .recent-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: radial-gradient(circle at top, #f7c96a 0, #2b2010 55%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #120f08;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow:
+        0 10px 22px rgba(0,0,0,0.85),
+        0 0 0 1px rgba(0,0,0,0.75);
+    }
+
+    .recent-info-title {
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .recent-info-sub {
+      font-size: 0.78rem;
+      color: #c8c8c8;
+      margin-bottom: 4px;
+    }
+
+    .recent-info-time {
+      font-size: 0.72rem;
+      color: #9a9a9a;
+    }
+
+    /* SUPPORT IA */
+
+    .support {
+      margin-top: 26px;
+      background: linear-gradient(180deg, #11111a 0, #050507 100%);
+      border-radius: 26px;
+      padding: 20px 22px 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow:
+        0 26px 70px rgba(0, 0, 0, 0.95),
+        0 0 0 1px rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .support-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .support-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .support-badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(215,183,91,0.15);
+      border: 1px solid rgba(215,183,91,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .support-sub {
+      font-size: 0.78rem;
+      color: #c2c2c2;
+    }
+
+    .support-sub strong {
+      color: var(--gold2);
+      font-weight: 500;
+    }
+
+    .support-chat {
+      margin-top: 6px;
+      border-radius: 18px;
+      background: #050507;
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 10px 12px;
+      max-height: 260px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+    }
+
+    .msg {
+      margin-bottom: 8px;
+      line-height: 1.45;
+    }
+
+    .msg.me {
+      text-align: right;
+      color: #f6f6f6;
+    }
+
+    .msg.me span {
+      background: rgba(255,255,255,0.06);
+      padding: 5px 9px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .msg.bot span {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 10px;
+      background: #11111b;
+      border: 1px solid rgba(215,183,91,0.35);
+    }
+
+    .support-input-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .support-input-row input {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      outline: none;
+      background: #050507;
+      color: #f5f5f5;
+      font-size: 0.82rem;
+    }
+
+    .support-input-row input::placeholder {
+      color: #777;
+    }
+
+    .support-input-row input:focus {
+      border-color: rgba(215,183,91,0.7);
+      box-shadow:
+        0 0 0 1px rgba(215,183,91,0.6),
+        0 12px 24px rgba(0,0,0,0.9);
+    }
+
+    .support-input-row button {
+      padding: 9px 18px;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+    }
+
+    .support-hint {
+      margin-top: 4px;
+      font-size: 0.72rem;
+      color: #9a9a9a;
+    }
+
     /* Footer */
 
     .footer {
@@ -342,7 +546,7 @@
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #8a8a8a;
-      margin-top: 6px;
+      margin-top: 10px;
     }
 
     .footer span {
@@ -377,7 +581,7 @@
       </div>
     </div>
 
-    <!-- bloc façon Base44 -->
+    <!-- bloc générateur -->
     <div class="shell">
       <div class="prompt-row">
         <div class="prompt-box">
@@ -420,6 +624,76 @@
       </div>
     </div>
 
+    <!-- Applications récentes -->
+    <div class="recent">
+      <div class="recent-header">Applications récentes</div>
+      <div class="recent-row">
+        <div class="recent-card">
+          <div class="recent-thumb">MP</div>
+          <div>
+            <div class="recent-info-title">MotoShop Pro</div>
+            <div class="recent-info-sub">
+              Concessionnaire de motos en ligne, fiches produits détaillées & financement.
+            </div>
+            <div class="recent-info-time">Mis à jour il y a 10 heures</div>
+          </div>
+        </div>
+
+        <div class="recent-card">
+          <div class="recent-thumb">UC</div>
+          <div>
+            <div class="recent-info-title">Ultimated Chat</div>
+            <div class="recent-info-sub">
+              Assistant IA personnel (humeur, ton, style) pour répondre comme toi.
+            </div>
+            <div class="recent-info-time">Mis à jour il y a 11 heures</div>
+          </div>
+        </div>
+
+        <div class="recent-card">
+          <div class="recent-thumb">US</div>
+          <div>
+            <div class="recent-info-title">Ultimated Shop</div>
+            <div class="recent-info-sub">
+              Plateforme e-commerce luxe pour gérer boutiques, abonnements et clients.
+            </div>
+            <div class="recent-info-time">Mis à jour il y a 13 heures</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support IA -->
+    <div class="support">
+      <div class="support-header">
+        <div class="support-title">Support IA — Ultimated</div>
+        <div class="support-badge">Mode assistant</div>
+      </div>
+      <div class="support-sub">
+        Pose une question pendant que tu construis tes sites :
+        <strong>design, textes, sections, stratégie</strong>.
+        L’IA répond comme un assistant interne Ultimated.
+      </div>
+
+      <div id="chatMessages" class="support-chat">
+        <div class="msg bot">
+          <span>👋 Salut, ici l’assistant Ultimated. Dis-moi sur quel type de site tu travailles et ce que tu veux améliorer (hero, couleurs, copy, sections…).</span>
+        </div>
+      </div>
+
+      <div class="support-input-row">
+        <input
+          id="supportInput"
+          type="text"
+          placeholder="Exemple : &quot;Comment améliorer la page d’accueil de mon site bancaire ?&quot;"
+        />
+        <button onclick="sendSupport()">Envoyer</button>
+      </div>
+      <div class="support-hint">
+        Entrée pour envoyer (comme un chat normal).
+      </div>
+    </div>
+
     <div class="footer">
       FROM THE HOUSE OF <span>ULTIMATED STUDIO OFFICIEL</span>
     </div>
@@ -428,12 +702,24 @@
   <script>
     const textarea = document.getElementById("userInput");
     const resultDiv = document.getElementById("result");
+    const chatBox = document.getElementById("chatMessages");
+    const supportInput = document.getElementById("supportInput");
 
-    // Entrée = générer
+    const chatHistory = [];
+
+    // Entrée = générer (creator)
     textarea.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
         generate();
+      }
+    });
+
+    // Entrée = envoyer (support)
+    supportInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendSupport();
       }
     });
 
@@ -462,6 +748,59 @@
         console.error(err);
         resultDiv.textContent =
           "Erreur réseau ou serveur. Réessaie dans quelques instants.";
+      }
+    }
+
+    function addMessage(role, text) {
+      const div = document.createElement("div");
+      div.className = "msg " + (role === "user" ? "me" : "bot");
+      const span = document.createElement("span");
+      span.textContent = text;
+      div.appendChild(span);
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendSupport() {
+      const message = supportInput.value.trim();
+      if (!message) return;
+
+      addMessage("user", message);
+      chatHistory.push("Utilisateur : " + message);
+      supportInput.value = "";
+
+      addMessage("bot", "⏳ Je réfléchis à une idée pour toi…");
+
+      const composedPrompt =
+        "Tu es l'assistant de support d'Ultimated Builder IA. " +
+        "Donne des conseils concrets (sections, textes, UX, idées de design) pour construire ou améliorer un site.\n\n" +
+        "Historique:\n" +
+        chatHistory.join("\n") +
+        "\nAssistant :";
+
+      try {
+        const response = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: composedPrompt }),
+        });
+
+        const data = await response.json();
+        const output =
+          data.output ||
+          "Je n’ai pas réussi à obtenir de réponse de l’API. Vérifie ta clé et ton crédit.";
+
+        // remplace le dernier message "je réfléchis..."
+        chatBox.lastChild.remove();
+        addMessage("bot", output);
+        chatHistory.push("Assistant : " + output);
+      } catch (err) {
+        console.error(err);
+        chatBox.lastChild.remove();
+        addMessage(
+          "bot",
+          "Erreur réseau ou serveur pendant la requête. Réessaie dans quelques instants."
+        );
       }
     }
   </script>
