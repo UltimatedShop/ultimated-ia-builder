@@ -25,18 +25,23 @@ export default function Home() {
         body: JSON.stringify({ prompt, mode }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        console.error("Erreur API:", data);
-        throw new Error("api_error");
+        console.error("❌ Erreur backend:", data);
+        const msg =
+          data.error ||
+          data.details ||
+          "Erreur serveur (vérifie la clé API ou le billing OpenAI).";
+        setErrorMsg(String(msg));
+        return;
       }
 
-      const data = await res.json();
       setHtml(data.html || "");
     } catch (err) {
-      console.error(err);
+      console.error("❌ Erreur réseau / fetch:", err);
       setErrorMsg(
-        "Aucune réponse (vérifie la clé API ou le billing OpenAI)."
+        "Impossible de contacter le serveur (vérifie que le site est bien redeploy et l'API fonctionne)."
       );
     } finally {
       setLoading(false);
@@ -79,7 +84,7 @@ export default function Home() {
 
         {/* Main grid */}
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.1fr)]">
-          {/* Left: prompt */}
+          {/* Left */}
           <section className="panel">
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -87,8 +92,8 @@ export default function Home() {
                   Décris ton site (comme sur Base44, mais version Ultimated)
                 </h2>
                 <p className="text-xs text-muted mt-0.5">
-                  Exemple : “Fais-moi un site e-commerce Liquidation Montcalm
-                  où je peux importer moi-même mes produits.”
+                  Exemple : “Fais un site e-commerce Liquidation Montcalm où je
+                  peux importer moi-même mes produits.”
                 </p>
               </div>
             </div>
@@ -103,20 +108,23 @@ export default function Home() {
                 rows={6}
               />
               <p className="helper-text">
-                Appuie sur <span className="key">Entrée</span> pour générer
-                (ou utilise le bouton).
+                Appuie sur <span className="key">Entrée</span> pour générer (ou
+                utilise le bouton).
               </p>
             </div>
 
-            {/* Mode toggle (Builder / Assistant) */}
             <div className="flex items-center justify-between mt-4 flex-wrap gap-4">
               <div className="flex gap-2 flex-wrap">
                 <button
                   type="button"
-                  onClick={() => setPrompt("Plateforme e-commerce de luxe pour vêtements haut de gamme.")}
+                  onClick={() =>
+                    setPrompt(
+                      "Boutique en ligne Liquidation Montcalm pour vendre du stock à rabais que j'importe moi-même."
+                    )
+                  }
                   className="chip"
                 >
-                  Boutique de luxe
+                  Liquidation Montcalm
                 </button>
                 <button
                   type="button"
@@ -133,7 +141,7 @@ export default function Home() {
                   type="button"
                   onClick={() =>
                     setPrompt(
-                      "Landing page SaaS pour vendre un logiciel de gestion d’entreprise."
+                      "Landing page SaaS pour un logiciel de gestion d’entreprise."
                     )
                   }
                   className="chip"
@@ -176,7 +184,9 @@ export default function Home() {
             </button>
 
             {errorMsg && (
-              <p className="text-xs text-red-400 mt-3">{errorMsg}</p>
+              <p className="text-xs text-red-400 mt-3 whitespace-pre-line">
+                {errorMsg}
+              </p>
             )}
           </section>
 
@@ -200,24 +210,28 @@ export default function Home() {
             <div className="preview-frame">
               {!html && !errorMsg && (
                 <div className="h-full flex items-center justify-center text-xs text-muted text-center px-6">
-                  Tape ce que tu veux comme site à gauche, clique sur
-                  <span className="text-gold ml-1 mr-1">“GÉNÉRER MON SITE”</span>
-                  et la version IA s’affichera ici en direct.
+                  Écris ton idée de site à gauche, clique sur{" "}
+                  <span className="text-gold mx-1">“GÉNÉRER MON SITE”</span> et
+                  l’IA construira le site ici.
                 </div>
               )}
 
               {html && (
                 <div
                   className="h-full w-full overflow-auto bg-black/60 rounded-xl border border-neutral-800"
-                  // ⚠️ On sait ce qu’on fait : contenu généré par l’IA
                   dangerouslySetInnerHTML={{ __html: html }}
                 />
+              )}
+
+              {errorMsg && !html && (
+                <div className="h-full flex items-center justify-center text-xs text-red-400 text-center px-6">
+                  {errorMsg}
+                </div>
               )}
             </div>
           </section>
         </div>
 
-        {/* Footer simple */}
         <footer className="mt-10 text-[0.65rem] text-muted text-center">
           From the House of{" "}
           <span className="text-gold">Ultimated Studio Officiel</span>.
