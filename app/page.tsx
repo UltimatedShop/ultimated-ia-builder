@@ -8,13 +8,11 @@ type Mode = "builder" | "assistant";
 export default function Page() {
   const [prompt, setPrompt] = useState("");
   const [mode, setMode] = useState<Mode>("builder");
+  const [previewConfig, setPreviewConfig] = useState<any | null>(null);
 
-  // Pour l’instant on génère un layout "fake" côté front.
-  // Étape 2 : on branchera ça sur l’API GPT pour avoir un vrai layout IA.
   function handleGenerate() {
-    const safePrompt = prompt.trim() || "Site Ultimated par défaut";
+    const safePrompt = prompt.trim() || "Site Ultimated généré par l’IA";
 
-    // Ici on pourrait analyser le texte, mais pour l’étape 1 on fait simple :
     setPreviewConfig({
       title: safePrompt,
       subtitle:
@@ -27,7 +25,8 @@ export default function Page() {
           items: [
             {
               label: "Style luxe Ultimated",
-              description: "Fond noir, accents or, look boutique de haute couture.",
+              description:
+                "Fond noir, accents or, look boutique / SaaS haut de gamme.",
               icon: "💎",
             },
             {
@@ -39,7 +38,7 @@ export default function Page() {
             {
               label: "Prêt pour l’IA",
               description:
-                "Prochaine étape : brancher GPT-5.1 pour générer toute la page en automatique.",
+                "Prochaine étape : brancher GPT-5.1 pour générer toute la structure de la page automatiquement.",
               icon: "🤖",
             },
           ],
@@ -47,14 +46,12 @@ export default function Page() {
         {
           type: "cta",
           title: "Prochaine étape",
-          text: "À l’étape suivante, on remplace ce layout statique par un layout généré par GPT-5.1 à partir de ta description.",
+          text: "À l’étape suivante, on remplace ce layout fixe par un layout 100% généré par GPT-5.1 selon ta description.",
           buttonLabel: "Continuer le setup IA bientôt",
         },
       ],
     });
   }
-
-  const [previewConfig, setPreviewConfig] = useState<any | null>(null);
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
@@ -85,7 +82,7 @@ export default function Page() {
               Étape 1
             </p>
             <h2 className="text-lg md:text-xl font-semibold text-yellow-100">
-              Décris ton site (comme sur Base44, mais version Ultimated)
+              Décris le site que tu veux (Ultimated Builder IA)
             </h2>
             <p className="text-xs md:text-sm text-yellow-200/70 mt-2">
               Exemple&nbsp;:{" "}
@@ -129,8 +126,8 @@ export default function Page() {
               placeholder="Décris ton site en détail : type de business, style, sections, produits, ambiance, etc..."
             />
             <p className="text-[11px] text-yellow-500/70 mt-1">
-              Appuie sur <span className="font-semibold">Entrée</span> ou le
-              bouton pour générer.
+              Appuie sur <span className="font-semibold">Entrée</span> ou sur le
+              bouton pour générer un preview.
             </p>
           </div>
 
@@ -142,23 +139,3 @@ export default function Page() {
             >
               ⚡ GÉNÉRER MON SITE (démo)
             </button>
-            <p className="text-[11px] text-yellow-500/70">
-              À l’étape 2, ce bouton appellera directement GPT-5.1 via ton API.
-            </p>
-          </div>
-        </section>
-
-        {/* Colonne droite : preview visuel */}
-        <section className="bg-[#050304] px-4 md:px-6 py-6">
-          <GeneratedSitePreview config={previewConfig} />
-        </section>
-      </div>
-
-      {/* Footer */}
-      <footer className="border-t border-yellow-900/40 bg-black/90 px-6 py-3 text-[11px] md:text-xs text-yellow-500/80 flex items-center justify-between">
-        <span>From the House of Ultimated Studio Officiel</span>
-        <span>Ultimated Builder IA — Prototype visuel, Étape 1/3</span>
-      </footer>
-    </main>
-  );
-}
