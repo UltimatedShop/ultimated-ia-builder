@@ -1,17 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { GeneratedSitePreview, GeneratedConfig } from "./components/GeneratedSitePreview";
+import { GeneratedSitePreview } from "./components/GeneratedSitePreview";
 
 export default function Page() {
   const [prompt, setPrompt] = useState("");
   const [mode, setMode] = useState<"builder" | "assistant">("builder");
-  const [previewConfig, setPreviewConfig] = useState<GeneratedConfig | null>(null);
+  const [previewConfig, setPreviewConfig] = useState<any>(null);
 
   function handleGenerate() {
     const safePrompt = prompt.trim() || "Site Ultimated généré par l’IA";
 
-    const config: GeneratedConfig = {
+    const config = {
       title: safePrompt,
       subtitle:
         "Site généré en direct par Ultimated Builder IA. Prochaine étape : génération complète avec GPT-5.1.",
