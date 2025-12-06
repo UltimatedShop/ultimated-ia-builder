@@ -1,4 +1,4 @@
-/* =========== THEME LV ULTIMATED (VERSION LUXE & AÉRÉE) =========== */
+/* =========== THEME LV ULTIMATED =========== */
 
 :root {
   --ub-bg: #050309;
@@ -32,13 +32,14 @@ body {
     "Segoe UI", sans-serif;
   color: var(--ub-text-main);
   background-color: var(--ub-bg-deep);
-  /* Fond LV mais plus doux, qui respire */
+  /* Fond cuir Ultimated Shop — assure-toi d'avoir /public/fond-ecran-ultimate-shop.png */
   background-image:
-    radial-gradient(circle at 10% 0, rgba(226, 192, 106, 0.18), transparent 60%),
-    radial-gradient(circle at 90% 100%, rgba(90, 57, 19, 0.35), transparent 65%),
-    radial-gradient(circle, rgba(50, 35, 18, 0.5) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 32px 32px;
-  background-blend-mode: normal, screen, normal;
+    radial-gradient(circle at 10% 0, rgba(0, 0, 0, 0.65), transparent 60%),
+    radial-gradient(circle at 90% 100%, rgba(0, 0, 0, 0.85), transparent 65%),
+    url("/fond-ecran-ultimate-shop.png");
+  background-size: auto, auto, cover;
+  background-position: top center, bottom center, center;
+  background-attachment: fixed;
 }
 
 /* WRAPPER GLOBAL */
@@ -49,7 +50,7 @@ body {
   flex-direction: column;
 }
 
-/* =========== NAVBAR (PLUS FINE, PLUS CLASSE) =========== */
+/* =========== NAVBAR =========== */
 
 .ub-top-nav {
   height: 70px;
@@ -186,7 +187,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 56px 20px 60px 20px; /* plus d’air autour */
+  padding: 56px 20px 60px 20px;
 }
 
 /* HERO */
@@ -216,49 +217,47 @@ body {
   color: rgba(249, 250, 251, 0.86);
 }
 
-/* CARTE PROMPT — PLUS LARGE, FLOTTANTE, AVEC MARGE */
+/* CARTE PROMPT — STYLE GROS BLOC OR ULTIMATED SHOP */
 
 .ub-input-card {
   width: 100%;
   max-width: 880px;
   margin-top: 26px;
-  border-radius: 32px;
-  background:
-    radial-gradient(circle at top left, rgba(226, 192, 106, 0.18), transparent 65%),
-    radial-gradient(circle at bottom right, rgba(12, 19, 38, 0.9), var(--ub-bg));
-  border: 1px solid var(--ub-border-soft);
+  border-radius: 36px;
+  background: linear-gradient(
+    180deg,
+    #fdf3dd 0%,
+    #f2d9a2 40%,
+    #c7993e 100%
+  );
+  border: 1px solid rgba(133, 94, 33, 0.6);
   box-shadow:
-    0 30px 70px rgba(0, 0, 0, 0.92),
+    0 26px 60px rgba(0, 0, 0, 0.95),
     0 0 0 1px rgba(0, 0, 0, 0.8);
-  padding: 22px 24px 18px 24px;
+  padding: 22px 28px 20px 28px;
 }
 
 .ub-input-row {
   display: flex;
   align-items: stretch;
-  gap: 12px;
+  gap: 14px;
 }
 
 .ub-prompt-input {
   flex: 1;
   border-radius: 22px;
-  border: 1px solid rgba(55, 65, 81, 0.9);
-  background: linear-gradient(
-    145deg,
-    rgba(15, 23, 42, 0.98),
-    rgba(3, 7, 18, 0.98)
-  );
+  border: 1px solid rgba(184, 138, 59, 0.6);
+  background: rgba(0, 0, 0, 0.14);
   padding: 14px 16px;
-  color: var(--ub-text-main);
+  color: #1f1305;
   font-size: 14px;
   resize: none;
   min-height: 82px;
   outline: none;
-  box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.7);
 }
 
 .ub-prompt-input::placeholder {
-  color: rgba(148, 163, 184, 0.9);
+  color: rgba(87, 64, 28, 0.85);
 }
 
 .ub-generate-btn {
@@ -295,25 +294,25 @@ body {
 }
 
 .ub-input-footer {
-  margin-top: 10px;
+  margin-top: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 11px;
-  color: rgba(209, 213, 219, 0.9);
+  color: rgba(79, 54, 16, 0.9);
 }
 
 .ub-model-pill {
   padding: 4px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(226, 192, 106, 0.95);
-  color: var(--ub-gold);
-  background: rgba(15, 10, 4, 0.96);
+  border: 1px solid rgba(184, 138, 59, 0.9);
+  background: rgba(0, 0, 0, 0.12);
+  color: #7b551b;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 }
 
-/* CHIPS — ESPACE ET DOUCEUR */
+/* CHIPS */
 
 .ub-chip-row {
   margin-top: 30px;
@@ -340,12 +339,37 @@ body {
   box-shadow: 0 0 18px rgba(226, 192, 106, 0.5);
 }
 
-/* APPS RÉCENTES — PLUS BAS, PLUS LARGE */
+/* PREVIEW DE SITE GÉNÉRÉ */
+
+.ub-preview-section {
+  width: 100%;
+  max-width: 1120px;
+  margin-top: 40px;
+}
+
+.ub-preview-title {
+  font-size: 16px;
+  font-weight: 620;
+  color: #fefce8;
+  margin-bottom: 10px;
+}
+
+.ub-preview-box {
+  border-radius: 24px;
+  background: rgba(3, 3, 3, 0.86);
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  padding: 20px;
+  min-height: 200px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+  overflow: auto;
+}
+
+/* APPS RÉCENTES */
 
 .ub-recent {
   width: 100%;
   max-width: 1120px;
-  margin-top: 54px;
+  margin-top: 44px;
 }
 
 .ub-recent-header {
@@ -408,7 +432,47 @@ body {
   color: rgba(156, 163, 175, 0.9);
 }
 
-/* FOOTER — AÉRÉ */
+/* SUPPORT IA */
+
+.ub-support {
+  width: 100%;
+  max-width: 1120px;
+  margin-top: 36px;
+}
+
+.ub-support-card {
+  border-radius: 20px;
+  border: 1px solid rgba(75, 85, 99, 0.9);
+  background: rgba(3, 3, 3, 0.92);
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: rgba(229, 231, 235, 0.96);
+}
+
+.ub-support-text {
+  max-width: 70%;
+}
+
+.ub-support-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ub-support-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(226, 192, 106, 0.95);
+  background: rgba(15, 10, 4, 0.96);
+  color: var(--ub-gold-light);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* FOOTER */
 
 .ub-footer {
   border-top: 1px solid var(--ub-border-dark);
@@ -438,7 +502,16 @@ body {
   }
 
   .ub-input-card {
-    padding-inline: 18px;
+    padding-inline: 20px;
+  }
+
+  .ub-support-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ub-support-text {
+    max-width: 100%;
   }
 }
 
