@@ -4,11 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ultimated IA Builder</title>
+
+  <!-- Optionnel : typo plus luxe -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
   <style>
     :root {
-      --gold1: #d4af37;
-      --gold2: #f6e27a;
-      --gold3: #f1c45c;
+      --gold1: #d7b75b;
+      --gold2: #f3e0a3;
+      --gold3: #f7c96a;
+      --bg: #050507;
     }
 
     * {
@@ -18,21 +26,21 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        Arial, sans-serif;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "SF Pro Text", Arial, sans-serif;
       background:
-        radial-gradient(circle at top, #2b2412 0, transparent 55%),
-        radial-gradient(circle at bottom, #111 0, #050505 70%);
+        radial-gradient(circle at top, #2a2113 0, transparent 55%),
+        radial-gradient(circle at bottom, #0b0b0c 0, #020203 70%);
       color: #f5f5f5;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 32px 16px;
     }
 
     .shell {
       width: 100%;
-      max-width: 1040px;
+      max-width: 1120px;
       display: flex;
       flex-direction: column;
       gap: 18px;
@@ -40,77 +48,90 @@
 
     .brand {
       text-align: center;
-      letter-spacing: 0.18em;
-      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      font-size: 0.68rem;
       text-transform: uppercase;
-      color: #888;
+      color: #a3a3a3;
     }
 
     .brand span {
-      color: var(--gold1);
+      color: var(--gold2);
     }
 
     .layout {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 16px;
     }
 
-    @media (min-width: 960px) {
+    @media (min-width: 980px) {
       .layout {
         flex-direction: row;
-        align-items: flex-start;
+        align-items: stretch;
       }
     }
 
     .card {
-      background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.05),
-          rgba(0, 0, 0, 0.9)
-        );
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 55%),
+        linear-gradient(135deg, rgba(11, 11, 12, 0.96), rgba(3, 3, 3, 0.98));
       border-radius: 22px;
-      border: 1px solid rgba(212, 175, 55, 0.55);
+      border: 1px solid rgba(215, 183, 91, 0.55);
       box-shadow:
-        0 22px 60px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(212, 175, 55, 0.15);
-      padding: 22px 22px 20px;
-      backdrop-filter: blur(16px);
+        0 28px 70px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(0, 0, 0, 0.7);
+      padding: 24px 22px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      /* léger highlight intérieur */
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      pointer-events: none;
     }
 
     .card-main {
-      flex: 2;
+      flex: 1.6;
     }
 
     .card-chat {
       flex: 1;
     }
 
-    @media (min-width: 780px) {
-      .card {
-        padding: 26px 28px 24px;
+    @media (min-width: 980px) {
+      .card-main {
+        padding: 26px 30px 24px;
+      }
+      .card-chat {
+        padding: 22px 22px 20px;
       }
     }
 
     @keyframes goldGlow {
       0% {
         background-position: 0% 50%;
-        text-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+        text-shadow: 0 0 5px rgba(247, 201, 106, 0.05);
       }
       50% {
         background-position: 100% 50%;
-        text-shadow: 0 0 18px rgba(246, 226, 122, 0.45);
+        text-shadow: 0 0 16px rgba(243, 224, 163, 0.4);
       }
       100% {
         background-position: 0% 50%;
-        text-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+        text-shadow: 0 0 5px rgba(247, 201, 106, 0.05);
       }
     }
 
     .title {
-      text-align: left;
-      font-size: 1.7rem;
+      font-family: "Playfair Display", "Times New Roman", serif;
+      font-size: 1.9rem;
       font-weight: 600;
+      letter-spacing: 0.03em;
       margin-bottom: 4px;
     }
 
@@ -126,12 +147,12 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      animation: goldGlow 6s ease-in-out infinite;
+      animation: goldGlow 7s ease-in-out infinite;
     }
 
     .subtitle {
-      font-size: 0.95rem;
-      color: #c2c2c2;
+      font-size: 0.93rem;
+      color: #d0d0d0;
       margin-bottom: 18px;
     }
 
@@ -154,10 +175,11 @@
       padding: 14px 14px;
       border-radius: 16px;
       border: 1px solid #333;
-      background: rgba(5, 5, 5, 0.9);
+      background: rgba(5, 5, 5, 0.96);
       color: #f5f5f5;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       outline: none;
+      line-height: 1.45;
       transition:
         border 0.2s ease,
         box-shadow 0.2s ease,
@@ -166,21 +188,21 @@
     }
 
     textarea::placeholder {
-      color: #777;
+      color: #7d7d7d;
     }
 
     textarea:focus {
       border-color: var(--gold1);
       background: #050505;
       box-shadow:
-        0 0 0 1px rgba(212, 175, 55, 0.5),
-        0 16px 30px rgba(0, 0, 0, 0.75);
+        0 0 0 1px rgba(215, 183, 91, 0.5),
+        0 18px 34px rgba(0, 0, 0, 0.85);
       transform: translateY(-1px);
     }
 
     .hint {
       font-size: 0.78rem;
-      color: #9a9a9a;
+      color: #a3a3a3;
     }
 
     .hint span {
@@ -189,15 +211,16 @@
 
     .file-row {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 8px;
       margin-top: 4px;
       font-size: 0.8rem;
-      color: #b3b3b3;
+      color: #c0c0c0;
     }
 
     .file-row input[type="file"] {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
 
     .file-badge {
@@ -211,8 +234,13 @@
       white-space: nowrap;
     }
 
+    .file-note {
+      font-size: 0.75rem;
+      color: #8d8d8d;
+    }
+
     .button-wrap {
-      margin-top: 10px;
+      margin-top: 8px;
       display: flex;
       justify-content: flex-end;
     }
@@ -228,21 +256,21 @@
         var(--gold1)
       );
       background-size: 240% 240%;
-      color: #111;
+      color: #171717;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       text-transform: uppercase;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.15em;
       cursor: pointer;
-      padding: 10px 22px;
+      padding: 9px 22px;
       box-shadow:
-        0 16px 30px rgba(0, 0, 0, 0.7),
-        0 0 0 1px rgba(0, 0, 0, 0.6);
+        0 18px 32px rgba(0, 0, 0, 0.82),
+        0 0 0 1px rgba(0, 0, 0, 0.7);
       transition:
         transform 0.15s ease,
         box-shadow 0.15s ease,
         filter 0.15s ease;
-      animation: goldGlow 5s ease-in-out infinite;
+      animation: goldGlow 6s ease-in-out infinite;
       white-space: nowrap;
     }
 
@@ -250,27 +278,31 @@
       transform: translateY(-1px);
       filter: brightness(1.03);
       box-shadow:
-        0 22px 40px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(212, 175, 55, 0.75);
+        0 24px 44px rgba(0, 0, 0, 0.88),
+        0 0 0 1px rgba(215, 183, 91, 0.7);
     }
 
     button:active {
       transform: translateY(1px);
       box-shadow:
-        0 10px 20px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(212, 175, 55, 0.5);
+        0 12px 24px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(215, 183, 91, 0.5);
     }
 
     .result {
       margin-top: 16px;
       border-radius: 18px;
-      padding: 16px 16px 18px;
-      background: radial-gradient(circle at top left, #1a1408 0, #050505 55%);
+      padding: 15px 15px 18px;
+      background: radial-gradient(
+        circle at top left,
+        #18110a 0,
+        #050505 55%
+      );
       border: 1px solid rgba(255, 255, 255, 0.04);
-      color: #e5e5e5;
+      color: #e8e8e8;
       text-align: left;
       font-size: 0.9rem;
-      max-height: 420px;
+      max-height: 380px;
       overflow: auto;
       white-space: pre-wrap;
     }
@@ -281,36 +313,39 @@
     }
 
     .chat-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 6px;
+      font-family: "Playfair Display", "Times New Roman", serif;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
     }
 
     .chat-sub {
-      font-size: 0.8rem;
-      color: #b3b3b3;
-      margin-bottom: 10px;
+      font-size: 0.78rem;
+      color: #bfbfbf;
+      margin-bottom: 12px;
     }
 
     .chat-log {
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.78);
       border-radius: 14px;
       padding: 10px 12px;
-      font-size: 0.8rem;
-      max-height: 200px;
+      font-size: 0.78rem;
+      max-height: 210px;
       overflow: auto;
       margin-bottom: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      white-space: pre-wrap;
     }
 
     .chat-input {
       width: 100%;
-      padding: 10px 11px;
+      padding: 9px 11px;
       border-radius: 999px;
-      border: 1px solid #333;
-      background: rgba(8, 8, 8, 0.95);
+      border: 1px solid #343434;
+      background: rgba(9, 9, 9, 0.97);
       color: #f5f5f5;
       font-size: 0.8rem;
       outline: none;
+      margin-bottom: 6px;
     }
 
     .chat-input:focus {
@@ -318,22 +353,22 @@
     }
 
     .chat-send {
-      margin-top: 8px;
       width: 100%;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       padding: 8px 14px;
     }
 
     .footer {
       text-align: center;
-      font-size: 0.75rem;
-      letter-spacing: 0.18em;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: #7b7b7b;
+      color: #8a8a8a;
+      margin-top: 2px;
     }
 
     .footer span {
-      color: var(--gold1);
+      color: var(--gold2);
     }
   </style>
 </head>
@@ -364,19 +399,18 @@
           ></textarea>
 
           <div class="hint">
-            Appuie sur <span>Entrée</span> pour générer (pas besoin de cliquer),
-            ou utilise le bouton à droite.
+            Appuie simplement sur <span>Entrée</span> pour générer, ou utilise le bouton.
           </div>
 
           <div class="file-row">
-            <label for="imageInput">Image de référence (maquette, screenshot) :</label>
+            <span>Image de référence (maquette, screenshot) :</span>
             <input type="file" id="imageInput" accept="image/*" />
             <div id="fileInfo" class="file-badge" style="display:none;"></div>
           </div>
 
-          <div style="font-size:0.75rem;color:#8e8e8e;">
-            (L’image est envoyée au serveur et sera utilisée quand on activera le modèle
-            *vision*. Pour l’instant, la génération se fait surtout avec le texte.)
+          <div class="file-note">
+            L’image sera utilisée dès qu’on activera le modèle vision. Pour
+            l’instant, la génération se base surtout sur ton texte.
           </div>
         </div>
 
@@ -393,13 +427,13 @@
       <div class="card card-chat">
         <div class="chat-title">Support IA — Ultimated</div>
         <div class="chat-sub">
-          Pose une question (design, UX, texte, stratégie) pendant que tu construis
-          tes sites.
+          Pose une question (design, texte, stratégie) pendant que tu construis tes
+          sites.
         </div>
 
         <div id="chatLog" class="chat-log">
-          💬 Astuce : demande par exemple <br />
-          « Comment améliorer la page d'accueil de ce site bancaire ? »
+💬 Astuce : demande par exemple
+« Comment améliorer la page d'accueil de ce site bancaire ? »
         </div>
 
         <input
@@ -419,16 +453,17 @@
   <script>
     let imageBase64 = null;
 
-    // Enter dans la zone principale = générer
     const textarea = document.getElementById("userInput");
+    const resultDiv = document.getElementById("result");
+
+    // Entrée = générer
     textarea.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
-        e.preventDefault(); // empêche le saut de ligne
+        e.preventDefault();
         generate();
       }
     });
 
-    // Lecture du fichier image en base64
     const imageInput = document.getElementById("imageInput");
     const fileInfo = document.getElementById("fileInfo");
 
@@ -442,7 +477,7 @@
 
       const reader = new FileReader();
       reader.onload = () => {
-        imageBase64 = reader.result; // data:image/png;base64,....
+        imageBase64 = reader.result; // data:image/...;base64,...
         fileInfo.textContent = file.name;
         fileInfo.style.display = "inline-block";
       };
@@ -451,7 +486,6 @@
 
     async function generate() {
       const prompt = textarea.value.trim();
-      const resultDiv = document.getElementById("result");
 
       if (!prompt) {
         alert("Écris au moins une idée de site 😉");
@@ -469,7 +503,8 @@
         });
 
         const data = await response.json();
-        resultDiv.textContent = data.output || "Erreur lors de la génération.";
+        resultDiv.textContent =
+          data.output || "Aucune réponse (vérifie la clé API ou le billing OpenAI).";
       } catch (err) {
         console.error(err);
         resultDiv.textContent =
@@ -477,14 +512,14 @@
       }
     }
 
-    // Petit chat de support IA (backend à faire dans /api/support)
+    // Chat support (backend /api/support à prévoir)
     async function sendSupport() {
       const input = document.getElementById("chatInput");
       const log = document.getElementById("chatLog");
       const text = input.value.trim();
       if (!text) return;
 
-      log.innerHTML += "\\n\\n👤 Toi : " + text;
+      log.innerHTML += "\n\n👤 Toi : " + text;
       input.value = "";
       log.scrollTop = log.scrollHeight;
 
@@ -495,11 +530,12 @@
           body: JSON.stringify({ question: text }),
         });
         const data = await res.json();
-        log.innerHTML += "\\n\\n🤖 IA : " + (data.reply || "Erreur du support.");
+        log.innerHTML += "\n\n🤖 IA : " + (data.reply || "Erreur du support.");
         log.scrollTop = log.scrollHeight;
       } catch (e) {
         console.error(e);
-        log.innerHTML += "\\n\\n🤖 IA : Erreur réseau, réessaie plus tard.";
+        log.innerHTML +=
+          "\n\n🤖 IA : Erreur réseau, vérifie le serveur ou ta clé API.";
       }
     }
   </script>
