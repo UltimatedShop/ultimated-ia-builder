@@ -1,9 +1,6 @@
-{
-  "name": "ultimated-ia-builder",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "openai": "^4.77.0"
-  }
+"dependencies": {
+  "next": "...",
+  "react": "...",
+  "react-dom": "...",
+  "openai": "^4.75.0"
 }
