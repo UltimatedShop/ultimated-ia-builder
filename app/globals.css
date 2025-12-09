@@ -1,204 +1,394 @@
-/* RESET DE BASE */
-* {
-  margin: 0;
-  padding: 0;
+/* RESET SIMPLE */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+html,
 body {
-  font-family: "Inter", sans-serif;
-  background: #000;
-  color: white;
-  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
 }
 
-/* PAGE */
+body {
+  min-height: 100vh;
+}
+
+/* FOND LV GÉNÉRAL */
+
+.ub-body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Helvetica Neue", Arial, sans-serif;
+  background-color: #040303;
+  color: #fdf5df;
+  /* léger dégradé or en bas comme reflet */
+  background-image: radial-gradient(
+    circle at top,
+    rgba(35, 24, 10, 0.9),
+    #050302 55%,
+    #000 100%
+  );
+}
+
+/* SHELL GLOBAL */
+
+.ub-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .ub-page {
-  max-width: 900px;
+  flex: 1;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: 40px 20px 120px;
-  background: url("/fond-ecran-ultimate-shop.png");
-  background-size: cover;
-  background-position: center;
+  padding: 32px 20px 72px;
 }
 
-/* ——————————————————————————
-      HERO SECTION LUXE
-—————————————————————————— */
+/* HEADER */
 
-.ub-hero {
+.ub-header {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 16px 20px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ub-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: radial-gradient(circle at top, #f7d79e, #b27a32);
+  color: #241304;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.75);
+}
+
+.ub-header-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ub-header-pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 220, 150, 0.4);
+  background: rgba(10, 6, 2, 0.9);
+  color: #f6e1b7;
+}
+
+/* FOOTER */
+
+.ub-footer {
   text-align: center;
-  padding: 40px 20px;
-  margin-bottom: 70px;
+  font-size: 11px;
+  color: #c7ae7b;
+  padding: 12px 16px 18px;
+  border-top: 1px solid rgba(255, 220, 150, 0.18);
+  background: radial-gradient(
+    circle at top,
+    rgba(60, 40, 18, 0.5),
+    rgba(5, 3, 1, 0.9)
+  );
 }
 
-.ub-hero-badge {
+/* ————— LANDING “WHAT WOULD YOU BUILD TODAY” ————— */
+
+.ub-landing {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ub-landing-inner {
+  max-width: 820px;
+  text-align: center;
+}
+
+.ub-landing-badge {
   display: inline-flex;
   padding: 6px 14px;
   border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  background: rgba(255, 215, 140, 0.12);
-  border: 1px solid rgba(255, 215, 140, 0.55);
-  color: #fbe3b3;
-  margin-bottom: 18px;
-}
-
-.ub-hero-title {
-  font-size: 42px;
-  line-height: 1.2;
-  font-weight: 800;
-  margin-bottom: 14px;
-  background: linear-gradient(120deg, #ffe9bb 0%, #ffcc7a 40%, #fff5d4 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 18px rgba(0, 0, 0, 1);
-  animation: ub-glow 3.2s ease-in-out infinite alternate;
-}
-
-@keyframes ub-glow {
-  0% {
-    text-shadow: 0 0 12px rgba(255, 204, 122, 0.3);
-  }
-  100% {
-    text-shadow: 0 0 26px rgba(255, 220, 155, 0.85);
-  }
-}
-
-.ub-hero-punchline {
-  font-size: 18px;
-  color: #f8ead0;
-  margin-bottom: 10px;
-}
-
-.ub-hero-subtext {
-  font-size: 15px;
-  color: #cdbb93;
-  max-width: 720px;
-  margin: 0 auto;
-  line-height: 1.7;
-}
-
-.ub-hero-highlight {
-  color: #ffe5aa;
-  font-weight: 600;
-}
-
-/* TAGS */
-.ub-hero-tags {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 20px 0 10px;
-}
-
-.ub-hero-tag {
-  padding: 6px 14px;
+  border: 1px solid rgba(255, 220, 150, 0.45);
+  background: radial-gradient(
+    circle at top,
+    rgba(255, 230, 180, 0.25),
+    transparent
+  );
   font-size: 12px;
-  border-radius: 999px;
-  background: rgba(10, 10, 10, 0.7);
-  border: 1px solid rgba(255, 215, 140, 0.3);
-  color: #fbe7c2;
-  backdrop-filter: blur(10px);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #f7e2b9;
+  margin-bottom: 16px;
 }
 
-/* ——————————————————————————
-         INPUT CARD LUXE
-—————————————————————————— */
-
-.ub-input-card {
-  background: linear-gradient(180deg, #f7d79e, #d3a869 70%);
-  border-radius: 22px;
-  padding: 26px;
-  margin-bottom: 60px;
-  position: relative;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.45);
-}
-
-.ub-input-label {
-  font-size: 14px;
+.ub-landing-title {
+  font-size: 34px;
+  line-height: 1.25;
   font-weight: 700;
-  color: #5d4210;
+  color: #ffe9b8;
   margin-bottom: 8px;
 }
 
-.ub-input-area {
-  width: 100%;
-  border-radius: 14px;
-  padding: 14px;
+.ub-landing-sub {
   font-size: 15px;
-  border: none;
-  resize: none;
-  min-height: 90px;
-  outline: none;
-  background: #fff8ee;
-  color: #33250f;
+  color: #e4d4b5;
+  margin-bottom: 22px;
 }
 
-.ub-input-btn {
-  position: absolute;
-  right: 22px;
-  bottom: 26px;
-  background: #4a2e0c;
-  color: #f8d9a2;
-  padding: 8px 14px;
-  font-size: 22px;
-  border-radius: 12px;
+.ub-landing-card {
+  margin: 0 auto;
+  max-width: 760px;
+  background: radial-gradient(
+    circle at top left,
+    #3b270f 0,
+    #1a1208 40%,
+    #050303 100%
+  );
+  border-radius: 26px;
+  padding: 16px;
+  border: 1px solid rgba(255, 220, 150, 0.55);
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
+}
+
+.ub-landing-textarea {
+  flex: 1;
+  border-radius: 18px;
+  border: none;
+  padding: 14px 16px;
+  resize: none;
+  min-height: 110px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fdf3dd;
+  font-size: 14px;
+  outline: none;
+}
+
+.ub-landing-textarea::placeholder {
+  color: rgba(248, 229, 195, 0.6);
+}
+
+.ub-landing-btn {
+  width: 52px;
+  border-radius: 18px;
   border: none;
   cursor: pointer;
+  background: linear-gradient(135deg, #f7d79e, #d3a869);
+  color: #3b2406;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.ub-chip-list {
-  margin-top: 14px;
+.ub-landing-btn:hover {
+  filter: brightness(1.04);
+}
+
+.ub-landing-chips {
+  margin-top: 16px;
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
 
 .ub-chip {
-  background: #4a2e0c;
-  color: #f8d9a2;
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 999px;
-  font-size: 13px;
+  border: 1px solid rgba(255, 220, 150, 0.4);
+  background: rgba(12, 8, 3, 0.95);
+  color: #f6e3c0;
+  font-size: 12px;
   cursor: pointer;
-  border: 1px solid rgba(255, 235, 200, 0.4);
 }
 
-/* ——————————————————————————
-              PREVIEW
-—————————————————————————— */
-
-.ub-preview-title {
-  font-size: 24px;
-  margin-bottom: 8px;
-  font-weight: 700;
+.ub-chip:hover {
+  background: rgba(23, 15, 6, 0.98);
 }
 
-.ub-preview-hint {
-  color: #d9c9a9;
+.ub-landing-hint {
+  margin-top: 14px;
+  font-size: 13px;
+  color: #e3d1ac;
 }
 
-.ub-preview-box {
-  margin-top: 18px;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 215, 140, 0.25);
+/* MESSAGES / ERREUR & LOADER */
+
+.ub-error-msg {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #ffb8b8;
+}
+
+.ub-loader {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 3px solid rgba(255, 232, 190, 0.3);
+  border-top-color: #ffe2a3;
+  animation: ub-spin 0.7s linear infinite;
+}
+
+/* ————— DASHBOARD / PREVIEW ————— */
+
+.ub-dashboard {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+  gap: 28px;
+}
+
+.ub-dashboard-left,
+.ub-dashboard-right {
+  background: rgba(0, 0, 0, 0.86);
+  border-radius: 22px;
+  padding: 18px 20px;
+  border: 1px solid rgba(255, 220, 150, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+}
+
+.ub-dash-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fbe3b3;
+}
+
+.ub-dash-sub {
+  font-size: 13px;
+  color: #d8c7a3;
+  margin-top: 4px;
+}
+
+.ub-chat-log {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ub-chat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.ub-chat-item.user .ub-chat-bubble {
+  background: radial-gradient(circle at top left, #f7d79e, #c3954e);
+  color: #3b2406;
+}
+
+.ub-chat-item.ia .ub-chat-bubble {
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid rgba(255, 220, 150, 0.4);
+  color: #f5e2c0;
+}
+
+.ub-chat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #b79b6b;
+}
+
+.ub-chat-bubble {
+  border-radius: 14px;
+  padding: 9px 12px;
+  font-size: 13px;
+  max-width: 100%;
+}
+
+.ub-chat-steps {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ub-step-pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(30, 20, 10, 0.9);
+  border: 1px solid rgba(255, 220, 150, 0.35);
+  color: #f5e2c0;
+}
+
+.ub-dash-right-header {
+  margin-bottom: 10px;
+}
+
+/* CARTE PREVIEW STYLE FENÊTRE */
+
+.ub-studio-preview-card {
+  margin-top: 6px;
   border-radius: 18px;
-  padding: 20px;
-  min-height: 140px;
+  border: 1px solid rgba(255, 220, 150, 0.35);
+  background: radial-gradient(
+    circle at top left,
+    rgba(55, 35, 14, 0.9),
+    rgba(7, 4, 1, 0.96)
+  );
+  overflow: hidden;
 }
 
-.ub-preview-placeholder {
-  opacity: 0.6;
-  font-size: 14px;
+.ub-studio-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: linear-gradient(
+    to bottom,
+    rgba(24, 16, 7, 0.95),
+    rgba(8, 4, 1, 0.98)
+  );
+  border-bottom: 1px solid rgba(255, 220, 150, 0.3);
 }
+
+.ub-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+}
+
+.ub-dot.red {
+  background: #ff5f57;
+}
+.ub-dot.yellow {
+  background: #febc2e;
+}
+.ub-dot.green {
+  background: #2bc840;
+}
+
+.ub-studio-preview-url {
+  margin-left: 8px;
+  font-size: 11px;
+  color: #f2ddba;
+}
+
+/* LIVE PREVIEW */
+
 .ub-live-site-shell {
-  margin-top: 0;
+  position: relative;
   background: #111;
-  height: 380px;
+  height: 420px;
   overflow: hidden;
 }
 
@@ -209,3 +399,131 @@ body {
   background: white;
 }
 
+/* OVERLAY LOADING PREVIEW */
+
+.ub-preview-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0.9)
+  );
+  color: #f7e3bc;
+  font-size: 13px;
+}
+
+.ub-big-loader {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 4px solid rgba(255, 232, 190, 0.3);
+  border-top-color: #ffe2a3;
+  animation: ub-spin 0.75s linear infinite;
+}
+
+/* ACTIONS SOUS LA PREVIEW */
+
+.ub-studio-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.ub-fullscreen-btn,
+.ub-publish-btn {
+  width: 100%;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ub-fullscreen-btn {
+  border: 1px solid rgba(255, 215, 140, 0.5);
+  background: rgba(0, 0, 0, 0.85);
+  color: #ffe7b3;
+}
+
+.ub-fullscreen-btn:hover:enabled {
+  background: rgba(0, 0, 0, 0.97);
+}
+
+.ub-publish-btn {
+  border: none;
+  background: linear-gradient(135deg, #f7d79e, #d3a869);
+  color: #3a2305;
+  font-weight: 600;
+}
+
+.ub-publish-btn:hover:enabled {
+  filter: brightness(1.05);
+}
+
+.ub-subdomain-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #e1cfaa;
+}
+
+.ub-subdomain-link {
+  color: #ffe8b7;
+}
+
+/* BOUTON RETOUR */
+
+.ub-back-btn {
+  margin-top: 16px;
+  background: none;
+  border: none;
+  color: #f0d9aa;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ub-back-btn:hover {
+  text-decoration: underline;
+}
+
+/* PLACEHOLDER PREVIEW */
+
+.ub-preview-placeholder {
+  font-size: 13px;
+  color: #d8c7a3;
+  padding: 14px 16px;
+}
+
+/* ANIMATIONS */
+
+@keyframes ub-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .ub-page {
+    padding: 20px 14px 60px;
+  }
+
+  .ub-dashboard {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ub-live-site-shell {
+    height: 360px;
+  }
+
+  .ub-landing-title {
+    font-size: 28px;
+  }
+}
