@@ -38,15 +38,19 @@ export default function Page() {
         setPreview("");
       } else if (typeof data.html === "string") {
         setPreview(data.html);
+
+        // garde le HTML pour la page /preview
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("ub-last-site-html", data.html);
+        }
       } else {
-        // fallback : on affiche le JSON formaté
+        const fallback = JSON.stringify(data, null, 2);
         setPreview(
-          `<pre style="white-space:pre-wrap;font-size:13px;">${JSON.stringify(
-            data,
-            null,
-            2
-          )}</pre>`
+          `<pre style="white-space:pre-wrap;font-size:13px;">${fallback}</pre>`
         );
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("ub-last-site-html", fallback);
+        }
       }
     } catch (err: any) {
       setErrorMsg(err.message || "Erreur inconnue.");
@@ -63,7 +67,7 @@ export default function Page() {
 
   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
-      // Enter simple → génère le site
+      // Enter simple → générer
       e.preventDefault();
       handleGenerate();
     }
@@ -71,6 +75,12 @@ export default function Page() {
 
   function applyIdea(text: string) {
     setPrompt(text);
+  }
+
+  function openFullPreview() {
+    if (typeof window !== "undefined") {
+      window.open("/preview", "_blank");
+    }
   }
 
   return (
@@ -100,17 +110,40 @@ export default function Page() {
         {/* HERO */}
         <section className="ub-hero">
           <h1 className="ub-hero-title">
-            Qu&apos;est-ce que tu veux créer aujourd&apos;hui ?
+            Qu&apos;est-ce que tu veux construire aujourd&apos;hui ?
           </h1>
           <p className="ub-hero-subtitle">
-            Décris ton idée de site ou de plateforme, et Ultimated Builder IA
-            te renvoie une structure complète, dans l&apos;esthétique
-            Ultimated Studio Officiel (noir & or).
+            Décris ton idée de site et Ultimated Builder IA crée une structure
+            complète (pages, sections, contenu de base) adaptée à ton projet,
+            ton audience et ton branding.
           </p>
         </section>
 
-        {/* CARTE PROMPT (ENTER = GÉNÈRE) */}
+        {/* CARTE OR — PROMPT */}
         <section className="ub-input-card">
+          <div style={{ textAlign: "center", marginBottom: 14 }}>
+            <div
+              style={{
+                fontSize: 12,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "rgba(94, 62, 22, 0.95)",
+              }}
+            >
+              Étape 1 · Décris ton projet
+            </div>
+            <div
+              style={{
+                fontSize: 18,
+                fontWeight: 600,
+                color: "#3b260c",
+                marginTop: 4,
+              }}
+            >
+              L&apos;IA s&apos;adapte à ton style, tes couleurs, ta niche
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit}>
             <div className="ub-input-row">
               <textarea
@@ -119,7 +152,7 @@ export default function Page() {
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={
-                  "Décris l’app ou le site à créer…\nEnter = générer, Shift + Enter = nouvelle ligne."
+                  "Exemples :\n• Boutique en ligne pour vêtements avec page d’accueil, catalogue, panier et page À propos.\n• Site pour un garage mécanique avec services, section rendez-vous et témoignages.\n• Portfolio pour photographe avec galeries, bio et formulaire de contact.\n\nEnter = générer · Shift + Enter = nouvelle ligne."
                 }
               />
               <button type="submit" className="ub-generate-btn">
@@ -127,56 +160,56 @@ export default function Page() {
               </button>
             </div>
             <div className="ub-input-footer">
-              <div className="ub-model-pill">GPT-5.1 · Ultimated</div>
+              <div className="ub-model-pill">GPT-5.1 · Générateur de sites</div>
               <div>
-                L&apos;IA construit les sections de ton site, comme une
-                plateforme clé en main, mais aux couleurs Ultimated.
+                Tu expliques ce que tu veux, l&apos;IA propose une structure de
+                site prête à personnaliser (textes, sections, blocs).
               </div>
             </div>
           </form>
         </section>
 
-        {/* CHIPS D’IDÉES */}
+        {/* CHIPS D’IDÉES (génériques, pas de marque perso) */}
         <div className="ub-chip-row">
           <button
             className="ub-chip"
             onClick={() =>
               applyIdea(
-                "Une plateforme de boutiques en ligne Ultimated où les clients créent leur propre boutique luxe (noir et or) avec abonnements et dashboard."
+                "Boutique en ligne pour vêtements et accessoires, avec page d'accueil, catalogue de produits, panier et page À propos."
               )
             }
           >
-            Plateforme Ultimated Shop
+            Boutique en ligne
           </button>
           <button
             className="ub-chip"
             onClick={() =>
               applyIdea(
-                "Un site de liquidation pour camions et remorques avec inventaire, filtres avancés, photos et formulaire de financement."
+                "Site vitrine pour garage mécanique : présentation du garage, liste des services, section rendez-vous et zone avis clients."
               )
             }
           >
-            Liquidation camions
+            Garage / services
           </button>
           <button
             className="ub-chip"
             onClick={() =>
               applyIdea(
-                "Un dashboard crypto luxe avec suivi de portefeuilles, graphiques temps réel et alertes IA personnalisées."
+                "Site pour restaurant avec menu, réservation en ligne, horaires, photos et section avis."
               )
             }
           >
-            Dashboard crypto
+            Restaurant & réservations
           </button>
           <button
             className="ub-chip"
             onClick={() =>
               applyIdea(
-                "Un site studio musical Ultimated Records pour vendre des beats, packs vocaux IA et services de mix/master."
+                "Portfolio pour créatif (designer, photographe, artiste) avec projets, biographie, tarifs et formulaire de contact."
               )
             }
           >
-            Studio musical Ultimated
+            Portfolio créatif
           </button>
         </div>
 
@@ -189,9 +222,9 @@ export default function Page() {
             )}
             {!preview && !errorMsg && (
               <p style={{ fontSize: 13, color: "#9ca3af" }}>
-                Écris ton idée de site ci-dessus puis appuie sur <b>Enter</b> ou
-                sur la flèche pour générer une preview. Le rendu s&apos;affiche
-                ici.
+                Décris ton projet dans la carte or ci-dessus puis appuie sur{" "}
+                <b>Enter</b> (ou sur la flèche). La structure du site généré
+                apparaîtra ici au format HTML.
               </p>
             )}
             {preview && (
@@ -201,66 +234,79 @@ export default function Page() {
               />
             )}
           </div>
+
+          {/* Bouton pour ouvrir le site en page séparée */}
+          {preview && (
+            <div className="ub-preview-actions">
+              <button
+                type="button"
+                className="ub-open-preview-btn"
+                onClick={openFullPreview}
+              >
+                Ouvrir le site généré dans un nouvel onglet
+              </button>
+            </div>
+          )}
         </section>
 
-        {/* APPS RÉCENTES */}
+        {/* APPS RÉCENTES — exemples génériques */}
         <section className="ub-recent">
           <div className="ub-recent-header">
-            <div className="ub-recent-title">Apps récentes</div>
+            <div className="ub-recent-title">Exemples d&apos;apps générées</div>
             <div className="ub-recent-sub">
-              Exemples d&apos;idées construites avec Ultimated Builder IA.
+              Idées de projets que des utilisateurs pourraient créer avec le
+              builder.
             </div>
           </div>
 
           <div className="ub-recent-grid">
             <article className="ub-app-card">
-              <div className="ub-app-title">Liquidation Montcalm Auctions</div>
+              <div className="ub-app-title">Boutique Mode Urbain</div>
               <div className="ub-app-desc">
-                Plateforme d&apos;enchères en ligne pour lots de liquidation,
-                camions et équipements, avec pages lots, calendrier et espace
-                acheteurs.
+                Site e-commerce pour vêtements streetwear avec lookbook,
+                fiches produits détaillées et section nouveautés.
               </div>
-              <div className="ub-app-meta">Mis à jour il y a 8 minutes</div>
+              <div className="ub-app-meta">Idée type · e-commerce</div>
             </article>
 
             <article className="ub-app-card">
-              <div className="ub-app-title">MotoShop Pro</div>
+              <div className="ub-app-title">Atelier Mécanique Pro</div>
               <div className="ub-app-desc">
-                Concessionnaire virtuel de motos et pièces, fiches détaillées,
-                section performance et prise de rendez-vous en atelier.
+                Site de services avec liste de réparations, prise de
+                rendez-vous et zone conseils pour les clients.
               </div>
-              <div className="ub-app-meta">Mis à jour il y a 6 heures</div>
+              <div className="ub-app-meta">Idée type · services locaux</div>
             </article>
 
             <article className="ub-app-card">
-              <div className="ub-app-title">Ultimated Chat</div>
+              <div className="ub-app-title">Studio Photo Lumière</div>
               <div className="ub-app-desc">
-                Assistant IA personnel aux couleurs Ultimated, capable de
-                conseiller, rédiger et générer des idées de boutique en continu.
+                Portfolio photo avec galeries thématiques, tarifs et formulaire
+                de réservation de séance.
               </div>
-              <div className="ub-app-meta">Mis à jour il y a 17 heures</div>
+              <div className="ub-app-meta">Idée type · portfolio</div>
             </article>
 
             <article className="ub-app-card">
-              <div className="ub-app-title">Ultimated Studio Dashboard</div>
+              <div className="ub-app-title">Coach en ligne Momentum</div>
               <div className="ub-app-desc">
-                Centre de contrôle pour gérer clients, boutiques, abonnements
-                Stripe et statistiques, le tout en noir & or.
+                Page de vente pour coach avec présentation de l&apos;offre,
+                témoignages, FAQ et bouton d&apos;inscription.
               </div>
-              <div className="ub-app-meta">Nouveau</div>
+              <div className="ub-app-meta">Idée type · landing page</div>
             </article>
           </div>
         </section>
 
-        {/* SUPPORT IA ULTIMATED */}
+        {/* SUPPORT IA ULTIMATED (texte neutre) */}
         <section className="ub-support">
           <div className="ub-support-card">
             <div className="ub-support-text">
-              <div className="ub-support-title">Support IA Ultimated</div>
+              <div className="ub-support-title">Support IA intégré</div>
               <div>
-                Besoin d&apos;aide pour une idée de site, une intégration ou un
-                bug ? Notre support IA t&apos;accompagne pour optimiser ton
-                builder et tes boutiques.
+                Tu ne sais pas comment formuler ton idée ou quelles sections
+                ajouter ? Le support IA peut t&apos;aider à trouver la meilleure
+                structure pour ton type de projet.
               </div>
             </div>
             <button className="ub-support-btn">
@@ -270,10 +316,10 @@ export default function Page() {
         </section>
       </main>
 
-      {/* FOOTER */}
+      {/* FOOTER (tu peux le garder ou le changer) */}
       <footer className="ub-footer">
         <span>From the House of Ultimated Studio Officiel</span>
-        <span>Ultimated Builder IA — Outil interne, version noir & or.</span>
+        <span>Ultimated Builder IA — Générateur de sites assisté par IA.</span>
       </footer>
     </div>
   );
