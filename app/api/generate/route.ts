@@ -1,4 +1,3 @@
-// app/api/generate/route.ts
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -11,21 +10,14 @@ export async function POST(req: Request) {
       console.error("❌ OPENAI_API_KEY manquante");
       return NextResponse.json(
         {
-          error: "OPENAI_API_KEY manquante.",
-          details:
-            "Ajoute ta clé sk-... dans Vercel (OPENAI_API_KEY) en Production puis redeploie.",
+          error:
+            "OPENAI_API_KEY manquante. Ajoute ta clé OpenAI dans Vercel (OPENAI_API_KEY) et redeploie.",
         },
         { status: 500 }
       );
     }
 
-    // ✅ Import dynamique d'OpenAI, limite les problèmes de bundler/runtime
-    const OpenAI = (await import("openai")).default;
-    const client = new OpenAI({ apiKey });
-
-    const body = await req.json().catch(() => ({}));
-    const prompt: string | undefined = (body as any)?.prompt;
-    const mode: string | undefined = (body as any)?.mode;
+    const { prompt } = await req.json();
 
     if (!prompt || typeof prompt !== "string") {
       return NextResponse.json(
@@ -34,65 +26,76 @@ export async function POST(req: Request) {
       );
     }
 
-    const fullPrompt = `
-Tu es "Ultimated Builder IA", une IA qui génère des sites web complets en HTML.
+    // Import dynamique pour éviter les bugs de bundler
+    const OpenAI = (await import("openai")).default;
+    const client = new OpenAI({ apiKey });
 
-CONTRAINTES :
-- Retourne UNIQUEMENT du HTML (aucun texte hors balises).
-- Pas de <html>, <head> ou <body>, seulement le contenu principal.
-- One-page moderne, sombre, luxe, avec touches dorées.
-- Sections minimum : header, héros, sections contenu, section produits/services, call-to-action, footer.
+    const systemMessage = `
+Tu es un expert front-end senior.
+Ta mission : générer UNE SEULE page HTML complète pour une WEB APP moderne.
 
-DESCRIPTION UTILISATEUR :
+Contraintes IMPORTANTES :
+
+- Thème visuel : noir profond + or luxe, style Ultimated / Louis Vuitton.
+- Pas de long texte marketing : phrases courtes, titres clairs, sections propres.
+- Style "app" ou "dashboard", pas "site vitrine compliqué".
+- Mets des éléments interactifs avec JavaScript natif :
+  - exemples : onglets qui changent le contenu, boutons qui ouvrent un panneau / une modal,
+    boutons ON/OFF qui changent un état affiché, filtres simples, etc.
+  - Aucune requête serveur ou API externe, tout doit rester côté front.
+- Utilise une seule page : pas de lien vers d'autres routes.
+- Mets le CSS et le JS directement dans la page (balises <style> et <script>).
+- Pas d'import de framework (pas de React, pas de Tailwind, pas de CDN).
+- Le design doit rester lisible : pas trop de texte, plutôt des blocs, cartes, tableaux, boutons.
+- N'utilise pas de contenu sur le remorquage par défaut : adapte-toi au sujet demandé.
+- Le résultat doit être un document HTML COMPLET commençant par <!DOCTYPE html>.
+`;
+
+    const userMessage = `
+Idée de l'app / du site à construire :
+
 "${prompt}"
 
-MODE : ${
-      mode === "assistant"
-        ? "Ajoute une FAQ et un peu plus de texte explicatif."
-        : "Reste simple, clair et prêt à être utilisé."
-    }
-    `.trim();
+Construis une interface qui ressemble à une vraie application web fonctionnelle
+(tableau de bord, cartes, boutons, menus, etc.), avec un peu d'interactions.
+`;
 
-    const response = await client.responses.create({
+    const completion = await client.responses.create({
       model: "gpt-5.1",
-      input: fullPrompt,
+      input: [
+        {
+          role: "system",
+          content: systemMessage,
+        },
+        {
+          role: "user",
+          content: userMessage,
+        },
+      ],
+      max_output_tokens: 4000,
     });
 
-    let html = "";
-    try {
-      const firstOutput: any = (response as any).output?.[0];
-      const firstContent: any = firstOutput?.content?.[0];
+    // Récupère le texte
+    const raw =
+      completion.output[0].content
+        ?.map((c: any) => ("text" in c ? c.text : ""))
+        .join("") || "";
 
-      if (typeof firstContent?.text === "string") {
-        html = firstContent.text;
-      } else if (firstContent?.text?.value) {
-        html = firstContent.text.value;
-      } else {
-        html = String(firstContent ?? "");
-      }
-    } catch (e) {
-      console.error("❌ Erreur extraction HTML:", e);
-    }
+    const html = raw.trim();
 
-    if (!html || html.trim().length === 0) {
-      console.error("❌ Réponse OpenAI vide ou illisible:", response);
-      return NextResponse.json(
-        {
-          error: "Réponse OpenAI vide.",
-          details:
-            "Le modèle a répondu mais sans HTML exploitable. Vérifie le modèle ou le prompt.",
-        },
-        { status: 500 }
-      );
+    if (!html.toLowerCase().includes("<html")) {
+      // sécurité : si jamais le modèle oublie le DOCTYPE
+      const wrapped = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Ultimated Builder IA</title></head><body>${html}</body></html>`;
+      return NextResponse.json({ html: wrapped });
     }
 
     return NextResponse.json({ html });
   } catch (err: any) {
-    console.error("❌ Erreur globale /api/generate:", err);
+    console.error("Erreur /api/generate :", err);
     return NextResponse.json(
       {
-        error: "Erreur OpenAI / serveur.",
-        details: String(err?.message || err),
+        error:
+          "Erreur interne lors de la génération du site. Vérifie la console Vercel pour plus de détails.",
       },
       { status: 500 }
     );
