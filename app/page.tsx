@@ -1,95 +1,124 @@
 "use client";
 
 import { useState } from "react";
-import GeneratedSitePreview from "./components/GeneratedSitePreview";
 
-export default function Home() {
-  const [idea, setIdea] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [generated, setGenerated] = useState(null);
+export default function HomePage() {
+  const [input, setInput] = useState("");
+  const [generated, setGenerated] = useState("");
 
   async function generateSite() {
-    if (!idea.trim()) return;
-    setLoading(true);
+    if (!input.trim()) return;
 
-    try {
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        body: JSON.stringify({ prompt: idea }),
-      });
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      body: JSON.stringify({ prompt: input }),
+    });
 
-      const data = await res.json();
-      setGenerated(data);
-    } catch (err) {
-      console.error(err);
-    }
-
-    setLoading(false);
+    const data = await res.json();
+    setGenerated(data.result || "Aucune structure générée.");
   }
+
+  function handleKey(e: any) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      generateSite();
+    }
+  }
+
+  const examples = [
+    "Site d'entreprise",
+    "Restaurant",
+    "Portfolio",
+    "Blog",
+    "Page de vente",
+    "E-commerce",
+    "Coach / Service",
+    "Immobilier",
+    "Artiste / Créateur",
+    "Mini-app IA",
+  ];
 
   return (
     <main className="ub-page">
-
-      {/* ————————— HERO ————————— */}
+      {/* ————————————————————
+           HERO SECTION WOW
+      ————————————————————— */}
       <section className="ub-hero">
-        <h1 className="ub-hero-title">Ultimated Builder IA</h1>
-        <p className="ub-hero-welcome">
-          Bienvenue dans l’outil officiel signé Ultimated Studio Officiel.
-        </p>
+        <div className="ub-hero-badge">Outil officiel · Ultimated Studio Officiel</div>
 
-        <p className="ub-hero-tagline">
-          Décrivez votre idée. L’IA génère une structure de site complète.
+        <h1 className="ub-hero-title">
+          L’IA qui construit des sites comme si tu payais une agence à 5 000$.
+        </h1>
+
+        <p className="ub-hero-punchline">
+          Tu écris ton idée. Ultimated Builder IA te sort un site complet, structuré, prêt à vendre.
         </p>
 
         <p className="ub-hero-subtext">
-          Vitrine, entreprise, e-commerce, restaurant, portfolio, blog, landing page, services,
-          coach, artiste, événement…  
-          <span className="ub-hero-highlight">Vous imaginez. Nous construisons.</span>
+          Vitrine, entreprise, boutique en ligne, restaurant, portfolio, coach, service local,
+          blog, événement, projet sur mesure…  
+          <span className="ub-hero-highlight">
+            Tes concurrents payent des devs. Toi, tu écris une phrase et ton site est prêt.
+          </span>
         </p>
-      </section>
 
-      {/* ————————— INPUT CARD ————————— */}
-      <section className="ub-input-card">
-        <div className="ub-input-header">ÉTAPE 1 — Décris ton idée</div>
-
-        <div className="ub-input-box">
-          <textarea
-            className="ub-textarea"
-            placeholder="Exemple : « Fais un site professionnel pour mon entreprise de rénovation,
-            avec page services, témoignages, photos et formulaire de contact. »"
-            value={idea}
-            onChange={(e) => setIdea(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" ? generateSite() : null}
-          ></textarea>
-
-          <button className="ub-generate-btn" onClick={generateSite}>
-            {loading ? "Génération..." : "→"}
-          </button>
+        <div className="ub-hero-tags">
+          <span className="ub-hero-tag">Design maison de luxe</span>
+          <span className="ub-hero-tag">GPT-5.1 intégré</span>
+          <span className="ub-hero-tag">Structure complète automatique</span>
         </div>
 
-        <div className="ub-chip-row">
-          <span className="ub-chip">Site d’entreprise</span>
-          <span className="ub-chip">Restaurant</span>
-          <span className="ub-chip">Portfolio</span>
-          <span className="ub-chip">Blog</span>
-          <span className="ub-chip">Page de vente</span>
+        <div className="ub-hero-cta-hint">
+          Descends un peu, décris ton idée et regarde l’IA travailler.
         </div>
       </section>
 
-      {/* ————————— PREVIEW ————————— */}
+      {/* ————————————————————
+              INPUT CARD LUXE
+      ————————————————————— */}
+      <div className="ub-input-card">
+        <div className="ub-input-label">ÉTAPE 1 — Décris ton idée</div>
+
+        <textarea
+          className="ub-input-area"
+          placeholder={`Exemple : "Fais un site professionnel pour mon entreprise de rénovation, avec page services, témoignages, photos et formulaire."`}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKey}
+        />
+
+        <button onClick={generateSite} className="ub-input-btn">
+          →
+        </button>
+
+        <div className="ub-chip-list">
+          {examples.map((ex) => (
+            <button key={ex} className="ub-chip" onClick={() => setInput(ex)}>
+              {ex}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ————————————————————
+                APERÇU
+      ————————————————————— */}
       <section className="ub-preview">
         <h2 className="ub-preview-title">Aperçu généré</h2>
+        <p className="ub-preview-hint">
+          L’IA génère ici la structure complète. Appuie sur <strong>Enter</strong>.
+        </p>
 
-        {!generated && (
-          <p className="ub-preview-placeholder">
-            Écris ton idée au-dessus puis appuie sur Enter.  
-            L’aperçu de la structure générée apparaîtra ici.
-          </p>
-        )}
-
-        {generated && <GeneratedSitePreview config={generated} />}
+        <div className="ub-preview-box">
+          {generated ? (
+            <pre>{generated}</pre>
+          ) : (
+            <p className="ub-preview-placeholder">
+              Écris ton idée ci-dessus puis appuie sur Enter.
+            </p>
+          )}
+        </div>
       </section>
-
     </main>
   );
 }
