@@ -85,13 +85,23 @@ export default function HomePage() {
     if (!slug) return;
     setPublishing(true);
 
-    // Ici tu enregistreras plus tard le site + slug en DB
+    // Plus tard : appel API pour sauvegarder site + slug en DB
     setTimeout(() => {
       setPublishing(false);
       alert(
         `Ton site sera disponible sur : https://${slug}.ultimatedbuilder.app (quand le système de sous-domaines sera branché).`
       );
     }, 900);
+  }
+
+  // 👉 nouveau : ouvrir le site généré dans un nouvel onglet
+  function openFullPage() {
+    if (!html) return;
+    const win = window.open("", "_blank");
+    if (!win) return;
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
   }
 
   const examples = [
@@ -214,7 +224,7 @@ export default function HomePage() {
             <h2 className="ub-studio-title">Studio Ultimated — Construction</h2>
             <p className="ub-studio-sub">
               L’IA vient de construire une vraie page HTML basée sur ton idée.
-              Tu peux la prévisualiser à droite.
+              Tu peux la prévisualiser à droite ou l’ouvrir en plein écran.
             </p>
 
             <ol className="ub-studio-steps">
@@ -229,7 +239,7 @@ export default function HomePage() {
               <p style={{ fontSize: 14, color: "#f3e0be" }}>
                 Ce site est généré dynamiquement à partir de ton texte. La
                 version finale pourra être personnalisée, traduite, et reliée à
-                ton propre domaine.
+                ton propre domaine ou à un sous-domaine Ultimated.
               </p>
             </div>
           </div>
@@ -238,7 +248,7 @@ export default function HomePage() {
             <h2 className="ub-studio-title">Preview du site généré</h2>
             <p className="ub-studio-sub">
               Ci-dessous : un rendu direct du HTML généré par l’IA. Tu peux
-              scroller dans la fenêtre.
+              scroller dans la fenêtre, ou l’ouvrir en plein écran.
             </p>
 
             <div className="ub-studio-preview-card">
@@ -267,16 +277,27 @@ export default function HomePage() {
               </div>
             </div>
 
-            <button
-              className="ub-publish-btn"
-              type="button"
-              onClick={handlePublish}
-              disabled={publishing}
-            >
-              {publishing
-                ? "Publication..."
-                : "Publier le site sur un sous-domaine Ultimated"}
-            </button>
+            <div className="ub-studio-actions">
+              <button
+                className="ub-fullscreen-btn"
+                type="button"
+                onClick={openFullPage}
+                disabled={!html}
+              >
+                Ouvrir le site en plein écran
+              </button>
+
+              <button
+                className="ub-publish-btn"
+                type="button"
+                onClick={handlePublish}
+                disabled={publishing}
+              >
+                {publishing
+                  ? "Publication..."
+                  : "Publier le site sur un sous-domaine Ultimated"}
+              </button>
+            </div>
 
             <p className="ub-subdomain-hint">
               Sous-domaine prévu :{" "}
