@@ -1,158 +1,197 @@
-/* ————————————————
-   BASE LAYOUT
-——————————————— */
+/* RESET DE BASE */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
-  margin: 0;
-  background: #0b0b0b;
   font-family: "Inter", sans-serif;
-  color: #f5e7c8;
+  background: #000;
+  color: white;
+  overflow-x: hidden;
 }
 
+/* PAGE */
 .ub-page {
-  max-width: 860px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px 20px 120px;
+  background: url("/fond-ecran-ultimate-shop.png");
+  background-size: cover;
+  background-position: center;
 }
 
-/* ————————————————
-   HERO SECTION
-——————————————— */
+/* ——————————————————————————
+      HERO SECTION LUXE
+—————————————————————————— */
 
 .ub-hero {
   text-align: center;
-  margin-top: 40px;
-  margin-bottom: 60px;
-  padding: 20px;
+  padding: 40px 20px;
+  margin-bottom: 70px;
+}
+
+.ub-hero-badge {
+  display: inline-flex;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(255, 215, 140, 0.12);
+  border: 1px solid rgba(255, 215, 140, 0.55);
+  color: #fbe3b3;
+  margin-bottom: 18px;
 }
 
 .ub-hero-title {
-  font-size: 48px;
-  font-weight: 700;
-  color: #f9e4ba;
-  text-shadow: 0 0 8px rgba(255,215,140,0.4);
+  font-size: 42px;
+  line-height: 1.2;
+  font-weight: 800;
+  margin-bottom: 14px;
+  background: linear-gradient(120deg, #ffe9bb 0%, #ffcc7a 40%, #fff5d4 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 18px rgba(0, 0, 0, 1);
+  animation: ub-glow 3.2s ease-in-out infinite alternate;
 }
 
-.ub-hero-welcome {
+@keyframes ub-glow {
+  0% {
+    text-shadow: 0 0 12px rgba(255, 204, 122, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 26px rgba(255, 220, 155, 0.85);
+  }
+}
+
+.ub-hero-punchline {
   font-size: 18px;
-  margin-top: 10px;
-  opacity: 0.85;
-}
-
-.ub-hero-tagline {
-  margin-top: 18px;
-  font-size: 20px;
-  color: #ffe7c2;
+  color: #f8ead0;
+  margin-bottom: 10px;
 }
 
 .ub-hero-subtext {
-  margin-top: 14px;
-  opacity: 0.7;
+  font-size: 15px;
+  color: #cdbb93;
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.7;
 }
 
 .ub-hero-highlight {
-  color: #ffdb99;
+  color: #ffe5aa;
   font-weight: 600;
 }
 
-/* ————————————————
-   INPUT CARD OR
-——————————————— */
+/* TAGS */
+.ub-hero-tags {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 20px 0 10px;
+}
+
+.ub-hero-tag {
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: 999px;
+  background: rgba(10, 10, 10, 0.7);
+  border: 1px solid rgba(255, 215, 140, 0.3);
+  color: #fbe7c2;
+  backdrop-filter: blur(10px);
+}
+
+/* ——————————————————————————
+         INPUT CARD LUXE
+—————————————————————————— */
 
 .ub-input-card {
-  background: linear-gradient(180deg, #f7e4b7, #deb976 80%);
-  border-radius: 24px;
-  padding: 28px;
-  margin-top: 20px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
-  color: #3b2a0b;
+  background: linear-gradient(180deg, #f7d79e, #d3a869 70%);
+  border-radius: 22px;
+  padding: 26px;
+  margin-bottom: 60px;
+  position: relative;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.45);
 }
 
-.ub-input-header {
-  font-size: 20px;
+.ub-input-label {
+  font-size: 14px;
   font-weight: 700;
-  margin-bottom: 14px;
+  color: #5d4210;
+  margin-bottom: 8px;
 }
 
-.ub-input-box {
-  display: flex;
-  gap: 12px;
-  align-items: stretch;
-}
-
-.ub-textarea {
-  flex: 1;
-  background: #fdf6e8;
-  border: 1px solid #c4a669;
+.ub-input-area {
+  width: 100%;
   border-radius: 14px;
-  padding: 16px;
+  padding: 14px;
   font-size: 15px;
-  min-height: 110px;
+  border: none;
   resize: none;
+  min-height: 90px;
+  outline: none;
+  background: #fff8ee;
+  color: #33250f;
 }
 
-.ub-generate-btn {
-  width: 60px;
-  border-radius: 14px;
-  background: #3c2b15;
-  color: #f9e4ba;
-  font-size: 28px;
+.ub-input-btn {
+  position: absolute;
+  right: 22px;
+  bottom: 26px;
+  background: #4a2e0c;
+  color: #f8d9a2;
+  padding: 8px 14px;
+  font-size: 22px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  transition: 0.2s ease;
 }
 
-.ub-generate-btn:hover {
-  transform: scale(1.05);
-}
-
-/* ————————————————
-   CHIPS
-——————————————— */
-
-.ub-chip-row {
-  margin-top: 18px;
+.ub-chip-list {
+  margin-top: 14px;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
 .ub-chip {
-  background: #3c2b15;
+  background: #4a2e0c;
+  color: #f8d9a2;
   padding: 6px 14px;
-  border-radius: 20px;
-  color: #f7e4b7;
-  font-size: 14px;
-  border: 1px solid #c2a265;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 235, 200, 0.4);
 }
 
-/* ————————————————
-   PREVIEW
-——————————————— */
-
-.ub-preview {
-  margin-top: 60px;
-}
+/* ——————————————————————————
+              PREVIEW
+—————————————————————————— */
 
 .ub-preview-title {
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 20px;
+  font-size: 24px;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.ub-preview-hint {
+  color: #d9c9a9;
+}
+
+.ub-preview-box {
+  margin-top: 18px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 215, 140, 0.25);
+  border-radius: 18px;
+  padding: 20px;
+  min-height: 140px;
 }
 
 .ub-preview-placeholder {
-  text-align: center;
-  opacity: 0.5;
-}
-
-/* ————————————————
-   GOLD CARD FOR PREVIEW
-——————————————— */
-
-.preview-card {
-  background: linear-gradient(180deg, #f9e8c6, #d3b078 80%);
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-  color: #3c2a14;
+  opacity: 0.6;
+  font-size: 14px;
 }
