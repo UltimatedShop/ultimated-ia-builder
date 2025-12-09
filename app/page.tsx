@@ -56,8 +56,8 @@ export default function BuilderPage() {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  // Styles LV noir & or
-  const mainStyle: React.CSSProperties = {
+  // Styles LV noir & or (sans types React)
+  const mainStyle = {
     minHeight: "100vh",
     width: "100%",
     color: "#fdfaf4",
@@ -67,7 +67,7 @@ export default function BuilderPage() {
       "-apple-system, BlinkMacSystemFont, system-ui, -apple-system, Segoe UI, sans-serif",
   };
 
-  const maxWidth: React.CSSProperties = {
+  const maxWidth = {
     maxWidth: "1180px",
     margin: "0 auto",
     padding: "32px 20px 32px 20px",
@@ -143,14 +143,6 @@ export default function BuilderPage() {
           >
             GPT-5.1
           </div>
-        </div>
-
-        <div
-          style={{
-            display: "none",
-          }}
-        >
-          {/* réservé si tu veux rajouter un bouton plus tard */}
         </div>
       </header>
 
