@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 
 type Step = 1 | 2;
 
@@ -25,6 +25,7 @@ export default function HomePage() {
   const [step, setStep] = useState<Step>(1);
   const [slug, setSlug] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   async function generateSite() {
     if (!input.trim() || loading) return;
@@ -60,10 +61,11 @@ export default function HomePage() {
         setHtml(null);
         setError("Aucune page générée.");
       } else {
-        setHtml(String(content));
         const s = slugify(input);
         setSlug(s);
-        setStep(2);
+        setPreviewLoading(true); // 👉 on affiche le loader de preview
+        setHtml(String(content));
+        setStep(2); // passe au mode dashboard
       }
     } catch (e) {
       console.error("Erreur fetch:", e);
@@ -81,20 +83,7 @@ export default function HomePage() {
     }
   }
 
-  function handlePublish() {
-    if (!slug) return;
-    setPublishing(true);
-
-    // Plus tard : appel API pour sauvegarder site + slug en DB
-    setTimeout(() => {
-      setPublishing(false);
-      alert(
-        `Ton site sera disponible sur : https://${slug}.ultimatedbuilder.app (quand le système de sous-domaines sera branché).`
-      );
-    }, 900);
-  }
-
-  // 👉 nouveau : ouvrir le site généré dans un nouvel onglet
+  // ouvre le site en plein écran (utilisé aussi par "Publier")
   function openFullPage() {
     if (!html) return;
     const win = window.open("", "_blank");
@@ -104,17 +93,28 @@ export default function HomePage() {
     win.document.close();
   }
 
+  function handlePublish() {
+    if (!slug) return;
+    setPublishing(true);
+
+    // plus tard : appel API pour sauvegarder en DB + sous-domaine réel
+    setTimeout(() => {
+      setPublishing(false);
+      // on simule le sous-domaine ET on ouvre le site pour test
+      openFullPage();
+      alert(
+        `Ton site est prêt à être publié sur : https://${slug}.ultimatedbuilder.app (quand ton wildcard Vercel sera configuré).`
+      );
+    }, 700);
+  }
+
   const examples = [
-    "Site d'entreprise",
-    "Restaurant",
-    "Portfolio",
-    "Blog",
-    "Page de vente",
-    "E-commerce",
-    "Coach / Service",
-    "Immobilier",
-    "Artiste / Créateur",
-    "Mini-app IA",
+    "Plateforme de towing 24/7",
+    "Restaurant haut de gamme",
+    "Portfolio de photographe",
+    "Coach business en ligne",
+    "Page de vente pour une formation",
+    "Mini-app IA pour agenda",
   ];
 
   const subdomainUrl = slug
@@ -123,62 +123,44 @@ export default function HomePage() {
 
   return (
     <main className="ub-page">
-      {/* HERO */}
-      <section className="ub-hero">
-        <div className="ub-hero-badge">
-          Outil officiel · Ultimated Studio Officiel
-        </div>
-
-        <h1 className="ub-hero-title">
-          Transforme une phrase en vrai site, prêt à tester.
-        </h1>
-
-        <p className="ub-hero-punchline">
-          Tu écris ton idée. Ultimated Builder IA génère une page complète :
-          sections, textes, mise en page. Tu n’as plus qu’à tester et publier.
-        </p>
-
-        <p className="ub-hero-subtext">
-          Vitrine, boutique en ligne, restaurant, portfolio, coach, service
-          local, landing page, app SaaS…
-          <br />
-          <span className="ub-hero-highlight">
-            Ton client croit que tu as payé une équipe de dev. En vrai, tu as
-            juste écrit une phrase ici.
-          </span>
-        </p>
-
-        <div className="ub-hero-tags">
-          <span className="ub-hero-tag">Design maison de luxe autour</span>
-          <span className="ub-hero-tag">Page générée en temps réel</span>
-          <span className="ub-hero-tag">Sous-domaine Ultimated à la demande</span>
-        </div>
-
-        <div className="ub-hero-cta-hint">
-          Écris ton idée ci-dessous, appuie sur <strong>Enter</strong> et
-          regarde la page se construire.
-        </div>
-      </section>
-
-      {/* STEP 1 : IDÉE */}
+      {/* ————— ÉCRAN 1 : landing style Base44, mais LV ————— */}
       {step === 1 && (
-        <>
-          <section className="ub-input-card">
-            <div className="ub-input-label">ÉTAPE 1 — Décris ton idée</div>
+        <section className="ub-landing">
+          <div className="ub-landing-inner">
+            <div className="ub-landing-badge">
+              Outil officiel · Ultimated Studio Officiel · GPT-5.1
+            </div>
 
-            <textarea
-              className="ub-input-area"
-              placeholder={`Exemple : "Crée un site pour mon service de remorquage 24/7, avec page services, tarifs, avis clients et formulaire d’appel d’urgence."`}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKey}
-            />
+            <h1 className="ub-landing-title">
+              What would you build today,<br />
+              version Ultimated&nbsp;?
+            </h1>
 
-            <button onClick={generateSite} className="ub-input-btn">
-              {loading ? <span className="ub-loader" /> : "→"}
-            </button>
+            <p className="ub-landing-sub">
+              Décris ton idée d’app, de site ou de boutique. Ultimated Builder IA
+              te renvoie un vrai site prêt à tester&nbsp;: sections, textes,
+              structure complète.
+            </p>
 
-            <div className="ub-chip-list">
+            <div className="ub-landing-card">
+              <textarea
+                className="ub-landing-textarea"
+                placeholder={`Exemple : "Une app pour les remorquages style Towsoft : tableau de bord pour dispatch, suivi des camions, facture en ligne et portail client."`}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKey}
+              />
+
+              <button
+                onClick={generateSite}
+                className="ub-landing-btn"
+                type="button"
+              >
+                {loading ? <span className="ub-loader" /> : "→"}
+              </button>
+            </div>
+
+            <div className="ub-landing-chips">
               {examples.map((ex) => (
                 <button
                   key={ex}
@@ -190,66 +172,73 @@ export default function HomePage() {
                 </button>
               ))}
             </div>
-          </section>
-
-          <section className="ub-preview">
-            <h2 className="ub-preview-title">Aperçu brut</h2>
-            <p className="ub-preview-hint">
-              Ici tu verras bientôt la structure brute du site. Pour l’instant,
-              passe surtout en mode STUDIO après la génération.
-            </p>
 
             {error && <p className="ub-error-msg">{error}</p>}
 
-            <div className="ub-preview-box">
-              {!html ? (
-                <p className="ub-preview-placeholder">
-                  Aucune structure générée pour l’instant.
-                </p>
-              ) : (
-                <p className="ub-preview-placeholder">
-                  Une page a déjà été générée. Clique sur “Générer” à nouveau
-                  pour passer en mode studio.
-                </p>
-              )}
-            </div>
-          </section>
-        </>
+            <p className="ub-landing-hint">
+              Appuie sur <strong>Enter</strong> ou sur la flèche dorée pour voir
+              l’IA construire ton site, comme sur Base44 mais en version Ultimated.
+            </p>
+          </div>
+        </section>
       )}
 
-      {/* STEP 2 : STUDIO AVEC VRAI SITE */}
+      {/* ————— ÉCRAN 2 : dashboard / preview comme Base44 ————— */}
       {step === 2 && (
-        <section className="ub-studio">
-          <div className="ub-studio-left">
-            <h2 className="ub-studio-title">Studio Ultimated — Construction</h2>
-            <p className="ub-studio-sub">
-              L’IA vient de construire une vraie page HTML basée sur ton idée.
-              Tu peux la prévisualiser à droite ou l’ouvrir en plein écran.
+        <section className="ub-dashboard">
+          {/* Colonne gauche : “chat / log” */}
+          <div className="ub-dashboard-left">
+            <h2 className="ub-dash-title">Session Ultimated Builder</h2>
+            <p className="ub-dash-sub">
+              Historique rapide de cette génération. Tu peux relancer une autre
+              idée quand tu veux.
             </p>
 
-            <ol className="ub-studio-steps">
-              <li>Analyse de ton idée (secteur, besoins, audience).</li>
-              <li>Génération d’un hero avec accroche et bouton principal.</li>
-              <li>Création de plusieurs sections (services, à propos, etc.).</li>
-              <li>Ajout d’un appel à l’action final.</li>
-            </ol>
+            <div className="ub-chat-log">
+              <div className="ub-chat-item user">
+                <div className="ub-chat-label">Toi</div>
+                <div className="ub-chat-bubble">{input}</div>
+              </div>
 
-            <div className="ub-studio-structure">
-              <h3>Résumé</h3>
-              <p style={{ fontSize: 14, color: "#f3e0be" }}>
-                Ce site est généré dynamiquement à partir de ton texte. La
-                version finale pourra être personnalisée, traduite, et reliée à
-                ton propre domaine ou à un sous-domaine Ultimated.
-              </p>
+              <div className="ub-chat-item ia">
+                <div className="ub-chat-label">Ultimated Builder IA</div>
+                <div className="ub-chat-bubble">
+                  J’analyse ton idée, je construis une page complète (hero,
+                  sections, CTA) et j’envoie le résultat à la preview à droite.
+                </div>
+              </div>
+
+              <div className="ub-chat-steps">
+                <div className="ub-step-pill">Analyse du besoin</div>
+                <div className="ub-step-pill">Structure du site</div>
+                <div className="ub-step-pill">Mise en page HTML</div>
+                <div className="ub-step-pill">Preview interactive</div>
+              </div>
             </div>
+
+            <button
+              type="button"
+              className="ub-back-btn"
+              onClick={() => {
+                setStep(1);
+                setHtml(null);
+                setError(null);
+              }}
+            >
+              ← Revenir à l’écran d’idée
+            </button>
           </div>
 
-          <div className="ub-studio-right">
-            <h2 className="ub-studio-title">Preview du site généré</h2>
-            <p className="ub-studio-sub">
-              Ci-dessous : un rendu direct du HTML généré par l’IA. Tu peux
-              scroller dans la fenêtre, ou l’ouvrir en plein écran.
-            </p>
+          {/* Colonne droite : grosse preview + loader */}
+          <div className="ub-dashboard-right">
+            <div className="ub-dash-right-header">
+              <h2 className="ub-dash-title">Preview en direct</h2>
+              <p className="ub-dash-sub">
+                À droite, tu vois exactement ce que ton client verra. Tu peux
+                l’ouvrir en plein écran ou le publier sur un sous-domaine
+                Ultimated.
+              </p>
+            </div>
 
             <div className="ub-studio-preview-card">
               <div className="ub-studio-preview-header">
@@ -263,12 +252,21 @@ export default function HomePage() {
 
               <div className="ub-live-site-shell">
                 {html ? (
-                  <iframe
-                    className="ub-live-site"
-                    srcDoc={html}
-                    sandbox="allow-same-origin allow-forms allow-scripts"
-                    title="Preview site généré"
-                  />
+                  <>
+                    <iframe
+                      className="ub-live-site"
+                      srcDoc={html}
+                      sandbox="allow-same-origin allow-forms allow-scripts"
+                      title="Preview site généré"
+                      onLoad={() => setPreviewLoading(false)} // 👉 cache le loader dès que le site est prêt
+                    />
+                    {previewLoading && (
+                      <div className="ub-preview-overlay">
+                        <div className="ub-big-loader" />
+                        <p>Loading the preview…</p>
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <p className="ub-preview-placeholder">
                     Aucun HTML généré pour l’instant.
@@ -304,16 +302,8 @@ export default function HomePage() {
               <span className="ub-subdomain-link">{subdomainUrl}</span>
               <br />
               (Quand ton wildcard Vercel sera prêt, tu pourras ouvrir ce lien
-              et tester le site comme un vrai.)
+              et tester ton site comme un vrai projet.)
             </p>
-
-            <button
-              type="button"
-              className="ub-back-btn"
-              onClick={() => setStep(1)}
-            >
-              ← Revenir à l’éditeur d’idée
-            </button>
           </div>
         </section>
       )}
