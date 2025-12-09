@@ -1,312 +1,284 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, useCallback, KeyboardEvent, FormEvent } from "react";
 
-type Step = 1 | 2;
+type GenerationState = "idle" | "loading" | "done" | "error";
 
-function slugify(raw: string): string {
-  return (
-    raw
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "")
-      .slice(0, 40) || "mon-site"
-  );
-}
-
-export default function HomePage() {
-  const [input, setInput] = useState("");
-  const [html, setHtml] = useState<string | null>(null);
+export default function BuilderPage() {
+  const [prompt, setPrompt] = useState("");
+  const [siteHtml, setSiteHtml] = useState("");
+  const [state, setState] = useState<GenerationState>("idle");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
 
-  const [step, setStep] = useState<Step>(1);
-  const [slug, setSlug] = useState<string | null>(null);
-  const [publishing, setPublishing] = useState(false);
-  const [previewLoading, setPreviewLoading] = useState(false);
+  const handleGenerate = useCallback(
+    async (e?: FormEvent) => {
+      if (e) e.preventDefault();
+      if (!prompt.trim() || state === "loading") return;
 
-  async function generateSite() {
-    if (!input.trim() || loading) return;
+      try {
+        setState("loading");
+        setError(null);
 
-    setLoading(true);
-    setError(null);
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt }),
+        });
 
-    try {
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: input }),
-      });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Erreur pendant la génération.");
+        }
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        console.error("Erreur API:", errData);
-        setError("Erreur pendant la génération (voir logs Vercel).");
-        setHtml(null);
-        setLoading(false);
-        return;
+        const data = await res.json();
+        // On s’attend à recevoir { html: "<!DOCTYPE html>..." }
+        setSiteHtml(data.html || "");
+        setState("done");
+      } catch (err: any) {
+        console.error(err);
+        setError(err.message || "Une erreur est survenue.");
+        setState("error");
       }
+    },
+    [prompt, state]
+  );
 
-      const data = await res.json();
-      const content =
-        data.html ??
-        data.result ??
-        data.output ??
-        data.text ??
-        "";
-
-      if (!content) {
-        setHtml(null);
-        setError("Aucune page générée.");
-      } else {
-        const s = slugify(input);
-        setSlug(s);
-        setPreviewLoading(true); // 👉 on affiche le loader de preview
-        setHtml(String(content));
-        setStep(2); // passe au mode dashboard
-      }
-    } catch (e) {
-      console.error("Erreur fetch:", e);
-      setError("Erreur réseau ou serveur.");
-      setHtml(null);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      generateSite();
+      handleGenerate();
     }
-  }
+  };
 
-  // ouvre le site en plein écran (utilisé aussi par "Publier")
-  function openFullPage() {
-    if (!html) return;
-    const win = window.open("", "_blank");
-    if (!win) return;
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-  }
-
-  function handlePublish() {
-    if (!slug) return;
-    setPublishing(true);
-
-    // plus tard : appel API pour sauvegarder en DB + sous-domaine réel
-    setTimeout(() => {
-      setPublishing(false);
-      // on simule le sous-domaine ET on ouvre le site pour test
-      openFullPage();
-      alert(
-        `Ton site est prêt à être publié sur : https://${slug}.ultimatedbuilder.app (quand ton wildcard Vercel sera configuré).`
-      );
-    }, 700);
-  }
-
-  const examples = [
-    "Plateforme de towing 24/7",
-    "Restaurant haut de gamme",
-    "Portfolio de photographe",
-    "Coach business en ligne",
-    "Page de vente pour une formation",
-    "Mini-app IA pour agenda",
-  ];
-
-  const subdomainUrl = slug
-    ? `https://${slug}.ultimatedbuilder.app`
-    : "Sous-domaine en attente";
+  const handlePublish = () => {
+    if (!siteHtml) return;
+    // Version simple : ouvre un onglet de preview avec le site généré
+    const blob = new Blob([siteHtml], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
-    <main className="ub-page">
-      {/* ————— ÉCRAN 1 : landing style Base44, mais LV ————— */}
-      {step === 1 && (
-        <section className="ub-landing">
-          <div className="ub-landing-inner">
-            <div className="ub-landing-badge">
-              Outil officiel · Ultimated Studio Officiel · GPT-5.1
-            </div>
-
-            <h1 className="ub-landing-title">
-              What would you build today,<br />
-              version Ultimated&nbsp;?
-            </h1>
-
-            <p className="ub-landing-sub">
-              Décris ton idée d’app, de site ou de boutique. Ultimated Builder IA
-              te renvoie un vrai site prêt à tester&nbsp;: sections, textes,
-              structure complète.
-            </p>
-
-            <div className="ub-landing-card">
-              <textarea
-                className="ub-landing-textarea"
-                placeholder={`Exemple : "Une app pour les remorquages style Towsoft : tableau de bord pour dispatch, suivi des camions, facture en ligne et portail client."`}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKey}
-              />
-
-              <button
-                onClick={generateSite}
-                className="ub-landing-btn"
-                type="button"
-              >
-                {loading ? <span className="ub-loader" /> : "→"}
-              </button>
-            </div>
-
-            <div className="ub-landing-chips">
-              {examples.map((ex) => (
-                <button
-                  key={ex}
-                  className="ub-chip"
-                  type="button"
-                  onClick={() => setInput(ex)}
-                >
-                  {ex}
-                </button>
-              ))}
-            </div>
-
-            {error && <p className="ub-error-msg">{error}</p>}
-
-            <p className="ub-landing-hint">
-              Appuie sur <strong>Enter</strong> ou sur la flèche dorée pour voir
-              l’IA construire ton site, comme sur Base44 mais en version Ultimated.
-            </p>
+    <main
+      className="min-h-screen w-full text-white"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at top, #3b2a11 0, #050308 55%, #000000 100%)",
+      }}
+    >
+      {/* Bandeau haut */}
+      <header className="w-full flex justify-between items-center px-6 md:px-10 py-4 text-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 border border-[#cfa65b]/40">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#cfa65b] to-[#a37727] text-black font-bold text-xs">
+              UB
+            </span>
+            <span className="text-xs uppercase tracking-[0.2em] text-[#f5e2b1]">
+              Ultimated Builder IA
+            </span>
           </div>
-        </section>
-      )}
+          <span className="hidden md:inline-block px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[11px] uppercase tracking-[0.22em]">
+            GPT-5.1
+          </span>
+        </div>
 
-      {/* ————— ÉCRAN 2 : dashboard / preview comme Base44 ————— */}
-      {step === 2 && (
-        <section className="ub-dashboard">
-          {/* Colonne gauche : “chat / log” */}
-          <div className="ub-dashboard-left">
-            <h2 className="ub-dash-title">Session Ultimated Builder</h2>
-            <p className="ub-dash-sub">
-              Historique rapide de cette génération. Tu peux relancer une autre
-              idée quand tu veux.
-            </p>
+        <div className="hidden md:flex items-center gap-2 text-xs opacity-70">
+          <span className="h-[1px] w-10 bg-white/30" />
+          <span>From the House of Ultimated Studio Officiel</span>
+        </div>
+      </header>
 
-            <div className="ub-chat-log">
-              <div className="ub-chat-item user">
-                <div className="ub-chat-label">Toi</div>
-                <div className="ub-chat-bubble">{input}</div>
-              </div>
-
-              <div className="ub-chat-item ia">
-                <div className="ub-chat-label">Ultimated Builder IA</div>
-                <div className="ub-chat-bubble">
-                  J’analyse ton idée, je construis une page complète (hero,
-                  sections, CTA) et j’envoie le résultat à la preview à droite.
-                </div>
-              </div>
-
-              <div className="ub-chat-steps">
-                <div className="ub-step-pill">Analyse du besoin</div>
-                <div className="ub-step-pill">Structure du site</div>
-                <div className="ub-step-pill">Mise en page HTML</div>
-                <div className="ub-step-pill">Preview interactive</div>
-              </div>
+      {/* Contenu principal */}
+      <section className="px-6 md:px-10 pb-10">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1.1fr,1.2fr] gap-8 md:gap-10 items-stretch">
+          {/* Colonne gauche : prompt */}
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#cfa65b]/40 bg-black/60 text-[11px] uppercase tracking-[0.26em] text-[#f0e0b3]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#f6d27d]" />
+              Outil officiel · Ultimated Studio Officiel · IA créative
             </div>
 
-            <button
-              type="button"
-              className="ub-back-btn"
-              onClick={() => {
-                setStep(1);
-                setHtml(null);
-                setError(null);
-              }}
-            >
-              ← Revenir à l’écran d’idée
-            </button>
-          </div>
-
-          {/* Colonne droite : grosse preview + loader */}
-          <div className="ub-dashboard-right">
-            <div className="ub-dash-right-header">
-              <h2 className="ub-dash-title">Preview en direct</h2>
-              <p className="ub-dash-sub">
-                À droite, tu vois exactement ce que ton client verra. Tu peux
-                l’ouvrir en plein écran ou le publier sur un sous-domaine
-                Ultimated.
+            <div className="space-y-3">
+              <h1 className="text-3xl md:text-[2.6rem] leading-tight font-semibold">
+                What would you build today,
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5d48a] via-[#f1c76c] to-[#c28a34]">
+                  version Ultimated?
+                </span>
+              </h1>
+              <p className="text-sm md:text-base text-white/80 max-w-xl">
+                Décris ton idée de site, d’app ou de boutique. Ultimated Builder
+                IA construit pour toi un vrai site prêt à tester : sections,
+                textes et structure complète.
               </p>
             </div>
 
-            <div className="ub-studio-preview-card">
-              <div className="ub-studio-preview-header">
-                <div className="ub-dot red" />
-                <div className="ub-dot yellow" />
-                <div className="ub-dot green" />
-                <span className="ub-studio-preview-url">
-                  {slug ? `${slug}.ultimatedbuilder.app` : "sous-domaine à venir"}
+            <form onSubmit={handleGenerate} className="space-y-4">
+              <div
+                className="
+                  relative rounded-3xl border border-[#cfa65b]/40
+                  bg-gradient-to-br from-black/80 via-black/75 to-[#1c1307]/90
+                  shadow-[0_18px_60px_rgba(0,0,0,.75)]
+                  overflow-hidden
+                "
+              >
+                <div className="p-[1px] bg-gradient-to-br from-[#f5d48a]/40 via-transparent to-[#8a6020]/60">
+                  <div className="rounded-[1.45rem] bg-black/80">
+                    <div className="flex">
+                      <div className="flex-1 p-5 md:p-6">
+                        <label
+                          htmlFor="prompt"
+                          className="block text-xs uppercase tracking-[0.18em] text-[#f4dfb0]/80 mb-2"
+                        >
+                          Décris ton projet
+                        </label>
+                        <textarea
+                          id="prompt"
+                          value={prompt}
+                          onChange={(e) => setPrompt(e.target.value)}
+                          onKeyDown={handleKeyDown}
+                          rows={3}
+                          placeholder={`Exemple : "Une landing page luxe pour une marque de vêtements streetwear, avec section héros, liste de produits coup de cœur et formulaire de contact simple."`}
+                          className="w-full resize-none bg-transparent text-sm md:text-base outline-none border-none placeholder:text-white/40"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={state === "loading"}
+                        className="
+                          hidden md:flex items-center justify-center 
+                          w-20 bg-gradient-to-b from-[#f6d88c] to-[#b17323]
+                          text-black text-xl
+                          hover:from-[#ffe4a8] hover:to-[#c78329]
+                          disabled:opacity-60 disabled:cursor-not-allowed
+                          transition-all duration-200
+                        "
+                      >
+                        {state === "loading" ? (
+                          <span className="animate-spin text-sm">⏳</span>
+                        ) : (
+                          "→"
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Bouton mobile */}
+                    <div className="md:hidden border-t border-white/5 flex justify-end px-4 py-3">
+                      <button
+                        type="submit"
+                        disabled={state === "loading"}
+                        className="
+                          inline-flex items-center justify-center gap-2
+                          px-5 py-2.5 rounded-full
+                          bg-gradient-to-r from-[#f6d88c] to-[#b17323]
+                          text-xs font-semibold text-black
+                          disabled:opacity-60 disabled:cursor-not-allowed
+                        "
+                      >
+                        {state === "loading" ? "Génération..." : "Lancer l’IA"}
+                        <span>→</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Suggestions de prompts */}
+              <div className="flex flex-wrap gap-2 text-[11px] md:text-xs">
+                {[
+                  "Boutique en ligne pour une marque de bijoux",
+                  "Landing page pour une app mobile de finances",
+                  "Site vitrine pour photographe professionnel",
+                  "Page de vente pour formation en ligne",
+                  "Mini-site pour un restaurant gastronomique",
+                ].map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => setPrompt(suggestion)}
+                    className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-[#f2d38b]/60 transition"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+
+              {error && (
+                <p className="text-xs text-red-300 bg-red-900/30 border border-red-500/40 rounded-md px-3 py-2">
+                  {error}
+                </p>
+              )}
+
+              <p className="text-[11px] md:text-xs text-white/50">
+                Appuie sur <span className="font-semibold">Enter</span> ou sur
+                la flèche dorée pour voir l’IA construire ton site en temps
+                réel.
+              </p>
+            </form>
+          </div>
+
+          {/* Colonne droite : preview */}
+          <div
+            className="
+              rounded-3xl border border-[#cfa65b]/40
+              bg-gradient-to-b from-white/[0.03] via-black/60 to-black/90
+              shadow-[0_22px_70px_rgba(0,0,0,.85)]
+              overflow-hidden flex flex-col
+            "
+          >
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-black/70">
+              <div className="flex items-center gap-2 text-xs text-white/70">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                <span>
+                  {state === "loading"
+                    ? "Construction du site en cours..."
+                    : state === "done"
+                    ? "Site généré – aperçu en direct"
+                    : "Aperçu du site généré"}
                 </span>
               </div>
 
-              <div className="ub-live-site-shell">
-                {html ? (
-                  <>
-                    <iframe
-                      className="ub-live-site"
-                      srcDoc={html}
-                      sandbox="allow-same-origin allow-forms allow-scripts"
-                      title="Preview site généré"
-                      onLoad={() => setPreviewLoading(false)} // 👉 cache le loader dès que le site est prêt
-                    />
-                    {previewLoading && (
-                      <div className="ub-preview-overlay">
-                        <div className="ub-big-loader" />
-                        <p>Loading the preview…</p>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <p className="ub-preview-placeholder">
-                    Aucun HTML généré pour l’instant.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="ub-studio-actions">
               <button
-                className="ub-fullscreen-btn"
-                type="button"
-                onClick={openFullPage}
-                disabled={!html}
-              >
-                Ouvrir le site en plein écran
-              </button>
-
-              <button
-                className="ub-publish-btn"
                 type="button"
                 onClick={handlePublish}
-                disabled={publishing}
+                disabled={!siteHtml}
+                className="
+                  text-[11px] px-3 py-1.5 rounded-full border
+                  border-[#f6d88c]/50 bg-black/60
+                  disabled:opacity-40 disabled:cursor-not-allowed
+                  hover:bg-[#f6d88c]/10 transition
+                "
               >
-                {publishing
-                  ? "Publication..."
-                  : "Publier le site sur un sous-domaine Ultimated"}
+                Publier & tester
               </button>
             </div>
 
-            <p className="ub-subdomain-hint">
-              Sous-domaine prévu :{" "}
-              <span className="ub-subdomain-link">{subdomainUrl}</span>
-              <br />
-              (Quand ton wildcard Vercel sera prêt, tu pourras ouvrir ce lien
-              et tester ton site comme un vrai projet.)
-            </p>
+            <div className="flex-1 bg-black">
+              {siteHtml ? (
+                <iframe
+                  title="Aperçu du site généré"
+                  srcDoc={siteHtml}
+                  className="w-full h-full border-none"
+                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center gap-3 text-sm text-white/60 px-6 text-center">
+                  <span className="text-4xl mb-1">✨</span>
+                  <p>
+                    L’aperçu de ton site apparaîtra ici dès que tu auras lancé
+                    une génération.
+                  </p>
+                  <p className="text-xs text-white/35 max-w-xs">
+                    Décris ton projet à gauche, lance l’IA, puis découvre un
+                    site complet prêt à affiner et publier.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
     </main>
   );
 }
