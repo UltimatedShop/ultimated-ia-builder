@@ -26,76 +26,101 @@ export async function POST(req: Request) {
       );
     }
 
-    // Import dynamique pour éviter les bugs de bundler
+    // Import dynamique pour éviter les bugs en build
     const OpenAI = (await import("openai")).default;
     const client = new OpenAI({ apiKey });
 
+    //---------------------------------------------------
+    // 🔥 — SYSTEM MESSAGE : RÈGLES POUR FORCER UNE VRAIE APP
+    //---------------------------------------------------
     const systemMessage = `
 Tu es un expert front-end senior.
-Ta mission : générer UNE SEULE page HTML complète pour une WEB APP moderne.
 
-Contraintes IMPORTANTES :
+TA MISSION : créer UNE SEULE page HTML complète qui fonctionne comme une vraie APP.
 
-- Thème visuel : noir profond + or luxe, style Ultimated / Louis Vuitton.
-- Pas de long texte marketing : phrases courtes, titres clairs, sections propres.
-- Style "app" ou "dashboard", pas "site vitrine compliqué".
-- Mets des éléments interactifs avec JavaScript natif :
-  - exemples : onglets qui changent le contenu, boutons qui ouvrent un panneau / une modal,
-    boutons ON/OFF qui changent un état affiché, filtres simples, etc.
-  - Aucune requête serveur ou API externe, tout doit rester côté front.
-- Utilise une seule page : pas de lien vers d'autres routes.
-- Mets le CSS et le JS directement dans la page (balises <style> et <script>).
-- Pas d'import de framework (pas de React, pas de Tailwind, pas de CDN).
-- Le design doit rester lisible : pas trop de texte, plutôt des blocs, cartes, tableaux, boutons.
-- N'utilise pas de contenu sur le remorquage par défaut : adapte-toi au sujet demandé.
-- Le résultat doit être un document HTML COMPLET commençant par <!DOCTYPE html>.
+CONTRAINTES EXTREMEMENT IMPORTANTES :
+
+1. STYLE VISUEL :
+   - Noir profond + Or luxe (style Ultimated / Louis Vuitton)
+   - Look application/dahsboard moderne, pas landing page marketing.
+
+2. STRUCTURE :
+   - Sidebar ou header app
+   - Cartes, tableaux, listes dynamiques, UI propre
+   - Aucun texte long, uniquement des blocs utiles
+
+3. INTERACTIONS (OBLIGATOIRE) :
+   - Onglets qui changent le contenu
+   - Boutons ON/OFF qui changent des états visibles
+   - Panneaux / sections qui s’ouvrent et se ferment
+   - Petites animations JS (sans frameworks)
+   - Tout doit fonctionner uniquement en JavaScript natif
+
+4. CODE :
+   - AUCUN markdown
+   - AUCUN bloc \`\`\`
+   - AUCUN React, AUCUN Tailwind, AUCUN import externe
+   - Tout le CSS doit être dans <style>
+   - Tout le JS doit être dans <script>
+   - Le résultat doit commencer par : <!DOCTYPE html>
 `;
 
+    //---------------------------------------------------
+    // 🔥 — USER MESSAGE (ton idée)
+    //---------------------------------------------------
     const userMessage = `
-Idée de l'app / du site à construire :
+Idée de l'app à construire :
 
 "${prompt}"
 
-Construis une interface qui ressemble à une vraie application web fonctionnelle
-(tableau de bord, cartes, boutons, menus, etc.), avec un peu d'interactions.
+Génère une application web interactive, avec
+- tables
+- cartes
+- sidebar
+- sections dynamiques
+- boutons fonctionnels (JS)
+- zéro markdown
+- unité : une seule page HTML.
 `;
 
-    const completion = await client.responses.create({
+    //---------------------------------------------------
+    // 🔥 — APPEL AU MODEL GPT-5.1
+    //---------------------------------------------------
+    const completion = await client.chat.completions.create({
       model: "gpt-5.1",
-      input: [
-        {
-          role: "system",
-          content: systemMessage,
-        },
-        {
-          role: "user",
-          content: userMessage,
-        },
+      messages: [
+        { role: "system", content: systemMessage },
+        { role: "user", content: userMessage },
       ],
-      max_output_tokens: 4000,
+      max_tokens: 5000,
     });
 
-    // Récupère le texte
-    const raw =
-      completion.output[0].content
-        ?.map((c: any) => ("text" in c ? c.text : ""))
-        .join("") || "";
+    let html = completion.choices[0].message?.content || "";
 
-    const html = raw.trim();
+    //---------------------------------------------------
+    // 🧽 — NETTOYAGE AUTOMATIQUE : enlève les ```html etc.
+    //---------------------------------------------------
+    html = html
+      .replace(/^```html/i, "")
+      .replace(/^```/i, "")
+      .replace(/```$/i, "")
+      .trim();
 
+    // Si jamais pas de <html>, on encapsule
     if (!html.toLowerCase().includes("<html")) {
-      // sécurité : si jamais le modèle oublie le DOCTYPE
-      const wrapped = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Ultimated Builder IA</title></head><body>${html}</body></html>`;
-      return NextResponse.json({ html: wrapped });
+      html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Ultimated App</title></head><body>${html}</body></html>`;
     }
 
+    //---------------------------------------------------
+    // 🔥 — REPONSE AU FRONT
+    //---------------------------------------------------
     return NextResponse.json({ html });
   } catch (err: any) {
     console.error("Erreur /api/generate :", err);
     return NextResponse.json(
       {
         error:
-          "Erreur interne lors de la génération du site. Vérifie la console Vercel pour plus de détails.",
+          "Erreur interne lors de la génération. Vérifie la console Vercel.",
       },
       { status: 500 }
     );
