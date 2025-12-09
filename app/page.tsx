@@ -31,7 +31,6 @@ export default function BuilderPage() {
         }
 
         const data = await res.json();
-        // On s’attend à recevoir { html: "<!DOCTYPE html>..." }
         setSiteHtml(data.html || "");
         setState("done");
       } catch (err: any) {
@@ -52,233 +51,494 @@ export default function BuilderPage() {
 
   const handlePublish = () => {
     if (!siteHtml) return;
-    // Version simple : ouvre un onglet de preview avec le site généré
     const blob = new Blob([siteHtml], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  // Styles LV noir & or
+  const mainStyle: React.CSSProperties = {
+    minHeight: "100vh",
+    width: "100%",
+    color: "#fdfaf4",
+    backgroundImage:
+      "radial-gradient(circle at top, #3c2810 0, #050308 55%, #000000 100%)",
+    fontFamily:
+      "-apple-system, BlinkMacSystemFont, system-ui, -apple-system, Segoe UI, sans-serif",
+  };
+
+  const maxWidth: React.CSSProperties = {
+    maxWidth: "1180px",
+    margin: "0 auto",
+    padding: "32px 20px 32px 20px",
+  };
+
+  const goldGradient = "linear-gradient(135deg,#f6ddb0,#f0c878,#b9832e)";
+  const goldBorder = "1px solid rgba(207,166,91,0.7)";
+
   return (
-    <main
-      className="min-h-screen w-full text-white"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle at top, #3b2a11 0, #050308 55%, #000000 100%)",
-      }}
-    >
-      {/* Bandeau haut */}
-      <header className="w-full flex justify-between items-center px-6 md:px-10 py-4 text-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 border border-[#cfa65b]/40">
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#cfa65b] to-[#a37727] text-black font-bold text-xs">
+    <main style={mainStyle}>
+      {/* Header */}
+      <header
+        style={{
+          ...maxWidth,
+          paddingBottom: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          fontSize: 12,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "6px 12px",
+              borderRadius: 999,
+              border: goldBorder,
+              background: "rgba(0,0,0,0.7)",
+            }}
+          >
+            <div
+              style={{
+                width: 26,
+                height: 26,
+                borderRadius: "999px",
+                backgroundImage: goldGradient,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#1a1307",
+                fontWeight: 700,
+                fontSize: 11,
+                letterSpacing: 0.5,
+              }}
+            >
               UB
-            </span>
-            <span className="text-xs uppercase tracking-[0.2em] text-[#f5e2b1]">
+            </div>
+            <span
+              style={{
+                textTransform: "uppercase",
+                letterSpacing: "0.24em",
+                fontSize: 10,
+                color: "#f4dfb0",
+              }}
+            >
               Ultimated Builder IA
             </span>
           </div>
-          <span className="hidden md:inline-block px-3 py-1 rounded-full border border-white/10 bg-white/5 text-[11px] uppercase tracking-[0.22em]">
+
+          <div
+            style={{
+              padding: "4px 9px",
+              borderRadius: 999,
+              background: "rgba(0,0,0,0.7)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              fontSize: 10,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+            }}
+          >
             GPT-5.1
-          </span>
+          </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-2 text-xs opacity-70">
-          <span className="h-[1px] w-10 bg-white/30" />
-          <span>From the House of Ultimated Studio Officiel</span>
+        <div
+          style={{
+            display: "none",
+          }}
+        >
+          {/* réservé si tu veux rajouter un bouton plus tard */}
         </div>
       </header>
 
-      {/* Contenu principal */}
-      <section className="px-6 md:px-10 pb-10">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1.1fr,1.2fr] gap-8 md:gap-10 items-stretch">
-          {/* Colonne gauche : prompt */}
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#cfa65b]/40 bg-black/60 text-[11px] uppercase tracking-[0.26em] text-[#f0e0b3]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#f6d27d]" />
-              Outil officiel · Ultimated Studio Officiel · IA créative
+      {/* Main */}
+      <section style={maxWidth}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 24,
+            alignItems: "stretch",
+          }}
+        >
+          {/* Colonne gauche – prompt */}
+          <div style={{ flex: 1 }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "6px 14px",
+                borderRadius: 999,
+                border: "1px solid rgba(244,223,176,0.7)",
+                background: "rgba(12,8,3,0.9)",
+                fontSize: 10,
+                textTransform: "uppercase",
+                letterSpacing: "0.26em",
+                marginBottom: 18,
+              }}
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: 999,
+                  background: "#f6d88c",
+                }}
+              />
+              <span>Outil officiel · Ultimated Studio Officiel · IA créative</span>
             </div>
 
-            <div className="space-y-3">
-              <h1 className="text-3xl md:text-[2.6rem] leading-tight font-semibold">
-                What would you build today,
-                <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#f5d48a] via-[#f1c76c] to-[#c28a34]">
-                  version Ultimated?
-                </span>
-              </h1>
-              <p className="text-sm md:text-base text-white/80 max-w-xl">
-                Décris ton idée de site, d’app ou de boutique. Ultimated Builder
-                IA construit pour toi un vrai site prêt à tester : sections,
-                textes et structure complète.
-              </p>
-            </div>
-
-            <form onSubmit={handleGenerate} className="space-y-4">
-              <div
-                className="
-                  relative rounded-3xl border border-[#cfa65b]/40
-                  bg-gradient-to-br from-black/80 via-black/75 to-[#1c1307]/90
-                  shadow-[0_18px_60px_rgba(0,0,0,.75)]
-                  overflow-hidden
-                "
+            <h1
+              style={{
+                fontSize: 30,
+                lineHeight: 1.15,
+                fontWeight: 600,
+                marginBottom: 10,
+              }}
+            >
+              What would you build today,
+              <br />
+              <span
+                style={{
+                  backgroundImage: goldGradient,
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                }}
               >
-                <div className="p-[1px] bg-gradient-to-br from-[#f5d48a]/40 via-transparent to-[#8a6020]/60">
-                  <div className="rounded-[1.45rem] bg-black/80">
-                    <div className="flex">
-                      <div className="flex-1 p-5 md:p-6">
-                        <label
-                          htmlFor="prompt"
-                          className="block text-xs uppercase tracking-[0.18em] text-[#f4dfb0]/80 mb-2"
-                        >
-                          Décris ton projet
-                        </label>
-                        <textarea
-                          id="prompt"
-                          value={prompt}
-                          onChange={(e) => setPrompt(e.target.value)}
-                          onKeyDown={handleKeyDown}
-                          rows={3}
-                          placeholder={`Exemple : "Une landing page luxe pour une marque de vêtements streetwear, avec section héros, liste de produits coup de cœur et formulaire de contact simple."`}
-                          className="w-full resize-none bg-transparent text-sm md:text-base outline-none border-none placeholder:text-white/40"
-                        />
-                      </div>
+                version Ultimated ?
+              </span>
+            </h1>
 
-                      <button
-                        type="submit"
-                        disabled={state === "loading"}
-                        className="
-                          hidden md:flex items-center justify-center 
-                          w-20 bg-gradient-to-b from-[#f6d88c] to-[#b17323]
-                          text-black text-xl
-                          hover:from-[#ffe4a8] hover:to-[#c78329]
-                          disabled:opacity-60 disabled:cursor-not-allowed
-                          transition-all duration-200
-                        "
-                      >
-                        {state === "loading" ? (
-                          <span className="animate-spin text-sm">⏳</span>
-                        ) : (
-                          "→"
-                        )}
-                      </button>
-                    </div>
+            <p
+              style={{
+                fontSize: 14,
+                color: "rgba(255,255,255,0.78)",
+                maxWidth: 460,
+                marginBottom: 20,
+              }}
+            >
+              Décris ton idée de site, d’app ou de boutique. Ultimated Builder
+              IA te renvoie un vrai site prêt à tester : sections, textes et
+              structure complète.
+            </p>
 
-                    {/* Bouton mobile */}
-                    <div className="md:hidden border-t border-white/5 flex justify-end px-4 py-3">
-                      <button
-                        type="submit"
-                        disabled={state === "loading"}
-                        className="
-                          inline-flex items-center justify-center gap-2
-                          px-5 py-2.5 rounded-full
-                          bg-gradient-to-r from-[#f6d88c] to-[#b17323]
-                          text-xs font-semibold text-black
-                          disabled:opacity-60 disabled:cursor-not-allowed
-                        "
-                      >
-                        {state === "loading" ? "Génération..." : "Lancer l’IA"}
-                        <span>→</span>
-                      </button>
-                    </div>
+            <form onSubmit={handleGenerate}>
+              {/* Carte input luxe */}
+              <div
+                style={{
+                  borderRadius: 26,
+                  padding: 1,
+                  backgroundImage:
+                    "linear-gradient(135deg,rgba(246,221,176,0.8),rgba(0,0,0,0.05),rgba(185,131,46,0.9))",
+                  marginBottom: 10,
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: 25,
+                    background: "rgba(5,3,5,0.97)",
+                    border: "1px solid rgba(0,0,0,0.9)",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "16px 18px 10px 18px",
+                      borderBottom: "1px solid rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <label
+                      htmlFor="prompt"
+                      style={{
+                        display: "block",
+                        fontSize: 11,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.18em",
+                        color: "rgba(244,223,176,0.85)",
+                        marginBottom: 6,
+                      }}
+                    >
+                      Décris ton projet
+                    </label>
+                    <textarea
+                      id="prompt"
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      rows={3}
+                      placeholder={`Exemple : "Une landing page luxe pour une marque de vêtements, avec section héros, grille de produits et formulaire de contact."`}
+                      style={{
+                        resize: "none",
+                        width: "100%",
+                        border: "none",
+                        outline: "none",
+                        background: "transparent",
+                        color: "#fdfaf4",
+                        fontSize: 14,
+                        lineHeight: 1.4,
+                      }}
+                    />
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "10px 16px 12px 16px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: 10,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 11,
+                        color: "rgba(255,255,255,0.55)",
+                      }}
+                    >
+                      Appuie sur <strong>Enter</strong> ou clique sur le bouton
+                      pour lancer l&apos;IA.
+                    </span>
+
+                    <button
+                      type="submit"
+                      disabled={state === "loading"}
+                      style={{
+                        borderRadius: 999,
+                        padding: "8px 20px",
+                        border: "none",
+                        backgroundImage: goldGradient,
+                        color: "#1a1307",
+                        fontWeight: 600,
+                        fontSize: 13,
+                        letterSpacing: 0.4,
+                        cursor: state === "loading" ? "default" : "pointer",
+                        opacity: state === "loading" ? 0.6 : 1,
+                        boxShadow:
+                          "0 8px 24px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.6)",
+                      }}
+                    >
+                      {state === "loading" ? "Génération..." : "Lancer l’IA →"}
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {/* Suggestions de prompts */}
-              <div className="flex flex-wrap gap-2 text-[11px] md:text-xs">
+              {/* Suggestions */}
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 8,
+                  marginBottom: 10,
+                }}
+              >
                 {[
                   "Boutique en ligne pour une marque de bijoux",
                   "Landing page pour une app mobile de finances",
                   "Site vitrine pour photographe professionnel",
                   "Page de vente pour formation en ligne",
                   "Mini-site pour un restaurant gastronomique",
-                ].map((suggestion) => (
+                ].map((s) => (
                   <button
-                    key={suggestion}
+                    key={s}
                     type="button"
-                    onClick={() => setPrompt(suggestion)}
-                    className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-[#f2d38b]/60 transition"
+                    onClick={() => setPrompt(s)}
+                    style={{
+                      padding: "6px 12px",
+                      borderRadius: 999,
+                      border: "1px solid rgba(255,255,255,0.18)",
+                      background: "rgba(10,7,5,0.88)",
+                      color: "rgba(255,255,255,0.82)",
+                      fontSize: 11,
+                      cursor: "pointer",
+                    }}
                   >
-                    {suggestion}
+                    {s}
                   </button>
                 ))}
               </div>
 
               {error && (
-                <p className="text-xs text-red-300 bg-red-900/30 border border-red-500/40 rounded-md px-3 py-2">
+                <p
+                  style={{
+                    fontSize: 11,
+                    color: "#ffd0d0",
+                    background: "rgba(120,0,0,0.55)",
+                    borderRadius: 8,
+                    padding: "6px 10px",
+                    border: "1px solid rgba(255,140,140,0.5)",
+                    marginTop: 4,
+                  }}
+                >
                   {error}
                 </p>
               )}
 
-              <p className="text-[11px] md:text-xs text-white/50">
-                Appuie sur <span className="font-semibold">Enter</span> ou sur
-                la flèche dorée pour voir l’IA construire ton site en temps
-                réel.
+              <p
+                style={{
+                  fontSize: 11,
+                  color: "rgba(255,255,255,0.55)",
+                  marginTop: 6,
+                }}
+              >
+                Laisse l’IA construire ton site comme un studio de luxe : structure,
+                textes et sections déjà en place.
               </p>
             </form>
           </div>
 
-          {/* Colonne droite : preview */}
-          <div
-            className="
-              rounded-3xl border border-[#cfa65b]/40
-              bg-gradient-to-b from-white/[0.03] via-black/60 to-black/90
-              shadow-[0_22px_70px_rgba(0,0,0,.85)]
-              overflow-hidden flex flex-col
-            "
-          >
-            <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-black/70">
-              <div className="flex items-center gap-2 text-xs text-white/70">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                <span>
-                  {state === "loading"
-                    ? "Construction du site en cours..."
-                    : state === "done"
-                    ? "Site généré – aperçu en direct"
-                    : "Aperçu du site généré"}
-                </span>
+          {/* Colonne droite – preview */}
+          <div style={{ flex: 1.1 }}>
+            <div
+              style={{
+                borderRadius: 26,
+                border: goldBorder,
+                background:
+                  "linear-gradient(180deg,rgba(255,255,255,0.06),rgba(0,0,0,0.96))",
+                boxShadow:
+                  "0 24px 70px rgba(0,0,0,0.9), 0 0 0 1px rgba(0,0,0,0.9)",
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}
+            >
+              {/* barre top de la fenêtre */}
+              <div
+                style={{
+                  padding: "8px 14px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  background: "rgba(6,4,3,0.95)",
+                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    fontSize: 11,
+                    color: "rgba(255,255,255,0.72)",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: 999,
+                      background:
+                        state === "loading" ? "#f6d88c" : "#4ade80",
+                    }}
+                  />
+                  <span>
+                    {state === "loading"
+                      ? "Construction du site en cours..."
+                      : state === "done"
+                      ? "Site généré — aperçu en direct"
+                      : "Aperçu du site généré"}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handlePublish}
+                  disabled={!siteHtml}
+                  style={{
+                    fontSize: 11,
+                    padding: "6px 12px",
+                    borderRadius: 999,
+                    border: "1px solid rgba(246,216,140,0.7)",
+                    background: "rgba(0,0,0,0.85)",
+                    color: "rgba(246,216,140,0.95)",
+                    cursor: siteHtml ? "pointer" : "default",
+                    opacity: siteHtml ? 1 : 0.4,
+                  }}
+                >
+                  Publier & tester
+                </button>
               </div>
 
-              <button
-                type="button"
-                onClick={handlePublish}
-                disabled={!siteHtml}
-                className="
-                  text-[11px] px-3 py-1.5 rounded-full border
-                  border-[#f6d88c]/50 bg-black/60
-                  disabled:opacity-40 disabled:cursor-not-allowed
-                  hover:bg-[#f6d88c]/10 transition
-                "
-              >
-                Publier & tester
-              </button>
-            </div>
-
-            <div className="flex-1 bg-black">
-              {siteHtml ? (
-                <iframe
-                  title="Aperçu du site généré"
-                  srcDoc={siteHtml}
-                  className="w-full h-full border-none"
-                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                />
-              ) : (
-                <div className="h-full flex flex-col items-center justify-center gap-3 text-sm text-white/60 px-6 text-center">
-                  <span className="text-4xl mb-1">✨</span>
-                  <p>
-                    L’aperçu de ton site apparaîtra ici dès que tu auras lancé
-                    une génération.
-                  </p>
-                  <p className="text-xs text-white/35 max-w-xs">
-                    Décris ton projet à gauche, lance l’IA, puis découvre un
-                    site complet prêt à affiner et publier.
-                  </p>
-                </div>
-              )}
+              <div style={{ flex: 1, background: "#000" }}>
+                {siteHtml ? (
+                  <iframe
+                    title="Aperçu du site généré"
+                    srcDoc={siteHtml}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      border: "none",
+                    }}
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                  />
+                ) : (
+                  <div
+                    style={{
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center",
+                      padding: "0 28px",
+                      gap: 6,
+                    }}
+                  >
+                    <div style={{ fontSize: 34, marginBottom: 4 }}>✨</div>
+                    <p
+                      style={{
+                        fontSize: 13,
+                        color: "rgba(255,255,255,0.78)",
+                      }}
+                    >
+                      L’aperçu de ton site apparaîtra ici dès que tu auras lancé
+                      une génération.
+                    </p>
+                    <p
+                      style={{
+                        fontSize: 11,
+                        color: "rgba(255,255,255,0.45)",
+                        maxWidth: 320,
+                      }}
+                    >
+                      Décris ton projet à gauche, lance l’IA, puis découvre un
+                      site complet prêt à affiner et publier, version Ultimated.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Plaque or en bas */}
+      <footer
+        style={{
+          width: "100%",
+          padding: "10px 0 16px 0",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            padding: "8px 24px",
+            borderRadius: 999,
+            backgroundImage: goldGradient,
+            color: "#20130a",
+            fontSize: 11,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            boxShadow: "0 8px 26px rgba(0,0,0,0.8)",
+          }}
+        >
+          Outil officiel · From the House of Ultimated Studio Officiel
+        </div>
+      </footer>
     </main>
   );
 }
