@@ -4,22 +4,62 @@ import { useState } from "react";
 
 export default function HomePage() {
   const [input, setInput] = useState("");
-  const [generated, setGenerated] = useState("");
+  const [generated, setGenerated] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function generateSite() {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      body: JSON.stringify({ prompt: input }),
-    });
+    setLoading(true);
+    setError(null);
 
-    const data = await res.json();
-    setGenerated(data.result || "Aucune structure générée.");
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.error("Erreur API:", errData);
+        setError("Erreur pendant la génération (voir logs Vercel).");
+        setGenerated("Aucune structure générée.");
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+
+      // 🔥 On accepte plusieurs formats de réponse pour ne pas tout casser
+      const value =
+        data.result ??
+        data.config ??
+        data.structure ??
+        data.html ??
+        data.output ??
+        data.text ??
+        "";
+
+      if (!value) {
+        setGenerated("Aucune structure générée.");
+      } else {
+        setGenerated(String(value));
+      }
+    } catch (e) {
+      console.error("Erreur fetch:", e);
+      setError("Erreur réseau ou serveur.");
+      setGenerated("Aucune structure générée.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleKey(e: any) {
-    if (e.key === "Enter") {
+  function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       generateSite();
     }
@@ -41,80 +81,106 @@ export default function HomePage() {
   return (
     <main className="ub-page">
       {/* ————————————————————
-           HERO SECTION WOW
-      ————————————————————— */}
+           HERO SECTION — accroche
+      ———————————————————— */}
       <section className="ub-hero">
-        <div className="ub-hero-badge">Outil officiel · Ultimated Studio Officiel</div>
+        <div className="ub-hero-badge">
+          Outil officiel · Ultimated Studio Officiel
+        </div>
 
         <h1 className="ub-hero-title">
-          L’IA qui construit des sites comme si tu payais une agence à 5 000$.
+          Transforme une simple phrase en site complet prêt à vendre.
         </h1>
 
         <p className="ub-hero-punchline">
-          Tu écris ton idée. Ultimated Builder IA te sort un site complet, structuré, prêt à vendre.
+          Tu expliques ton idée. Ultimated Builder IA te sort une structure de
+          site professionnelle comme si tu avais payé une agence à 5&nbsp;000$.
         </p>
 
         <p className="ub-hero-subtext">
-          Vitrine, entreprise, boutique en ligne, restaurant, portfolio, coach, service local,
-          blog, événement, projet sur mesure…  
+          Vitrine, boutique en ligne, restaurant, portfolio, coach, service
+          local, blog, landing page, projet sur mesure…
+          <br />
           <span className="ub-hero-highlight">
-            Tes concurrents payent des devs. Toi, tu écris une phrase et ton site est prêt.
+            Tes clients voient un site propre. Tes concurrents se demandent
+            combien tu as payé. Toi, tu as juste utilisé ton Builder IA.
           </span>
         </p>
 
         <div className="ub-hero-tags">
           <span className="ub-hero-tag">Design maison de luxe</span>
           <span className="ub-hero-tag">GPT-5.1 intégré</span>
-          <span className="ub-hero-tag">Structure complète automatique</span>
+          <span className="ub-hero-tag">Structure + sections auto</span>
         </div>
 
         <div className="ub-hero-cta-hint">
-          Descends un peu, décris ton idée et regarde l’IA travailler.
+          Écris ton idée juste en dessous, appuie sur <strong>Enter</strong> et
+          regarde.
         </div>
       </section>
 
       {/* ————————————————————
               INPUT CARD LUXE
-      ————————————————————— */}
-      <div className="ub-input-card">
+      ———————————————————— */}
+      <section className="ub-input-card">
         <div className="ub-input-label">ÉTAPE 1 — Décris ton idée</div>
 
         <textarea
           className="ub-input-area"
-          placeholder={`Exemple : "Fais un site professionnel pour mon entreprise de rénovation, avec page services, témoignages, photos et formulaire."`}
+          placeholder={`Exemple : "Crée un site pour mon service de remorquage 24/7, avec page services, prix, formulaire d’appel d’urgence et avis clients."`}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKey}
         />
 
         <button onClick={generateSite} className="ub-input-btn">
-          →
+          {loading ? "…" : "→"}
         </button>
 
         <div className="ub-chip-list">
           {examples.map((ex) => (
-            <button key={ex} className="ub-chip" onClick={() => setInput(ex)}>
+            <button
+              key={ex}
+              className="ub-chip"
+              type="button"
+              onClick={() => setInput(ex)}
+            >
               {ex}
             </button>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* ————————————————————
                 APERÇU
-      ————————————————————— */}
+      ———————————————————— */}
       <section className="ub-preview">
         <h2 className="ub-preview-title">Aperçu généré</h2>
         <p className="ub-preview-hint">
-          L’IA génère ici la structure complète. Appuie sur <strong>Enter</strong>.
+          L’IA génère ici la structure complète. Appuie sur{" "}
+          <strong>Enter</strong> pour lancer la génération.
         </p>
+
+        {error && (
+          <p
+            style={{
+              color: "#ffb4b4",
+              fontSize: "13px",
+              marginTop: "8px",
+            }}
+          >
+            {error}
+          </p>
+        )}
 
         <div className="ub-preview-box">
           {generated ? (
-            <pre>{generated}</pre>
+            <pre style={{ whiteSpace: "pre-wrap", fontSize: 14 }}>
+              {generated}
+            </pre>
           ) : (
             <p className="ub-preview-placeholder">
-              Écris ton idée ci-dessus puis appuie sur Enter.
+              Aucune structure générée pour l’instant.
             </p>
           )}
         </div>
