@@ -3,139 +3,220 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(req: Request) {
-  try {
-    const apiKey = process.env.OPENAI_API_KEY;
+type Theme = {
+  background?: string;
+  backgroundAlt?: string;
+  accent?: string;
+  accentSoft?: string;
+  border?: string;
+  textPrimary?: string;
+  textMuted?: string;
+};
 
-    if (!apiKey) {
-      console.error("❌ OPENAI_API_KEY manquante");
-      return NextResponse.json(
-        {
-          error:
-            "OPENAI_API_KEY manquante. Ajoute ta clé dans Vercel (OPENAI_API_KEY) puis redeploie.",
-        },
-        { status: 500 }
-      );
-    }
+type AppConfig = {
+  appName: string;
+  description: string;
+  theme?: Theme;
+  cards: { label: string; value: string; hint: string }[];
+  columns: string[];
+  rows: string[][];
+  timeline: { text: string; time: string }[];
+};
 
-    const { prompt } = await req.json();
+/** 🎨 Palettes prédéfinies (pour les couleurs aléatoires) */
+const PRESET_THEMES: Theme[] = [
+  // Bleu néon
+  {
+    background: "#020617",
+    backgroundAlt: "#0b1120",
+    accent: "#38bdf8",
+    accentSoft: "rgba(56,189,248,0.16)",
+    border: "rgba(148,163,184,0.6)",
+    textPrimary: "#e5f2ff",
+    textMuted: "rgba(191,219,254,0.85)",
+  },
+  // Vert dashboard
+  {
+    background: "#020814",
+    backgroundAlt: "#04101e",
+    accent: "#22c55e",
+    accentSoft: "rgba(34,197,94,0.18)",
+    border: "rgba(74,222,128,0.5)",
+    textPrimary: "#ecfdf3",
+    textMuted: "rgba(187,247,208,0.9)",
+  },
+  // Violet / rose
+  {
+    background: "#14001f",
+    backgroundAlt: "#1f0030",
+    accent: "#e879f9",
+    accentSoft: "rgba(232,121,249,0.18)",
+    border: "rgba(244,114,182,0.6)",
+    textPrimary: "#fdf2ff",
+    textMuted: "rgba(251,207,232,0.9)",
+  },
+  // Orange / ambre
+  {
+    background: "#130a02",
+    backgroundAlt: "#1f1305",
+    accent: "#fb923c",
+    accentSoft: "rgba(251,146,60,0.18)",
+    border: "rgba(251,191,36,0.6)",
+    textPrimary: "#fff7ed",
+    textMuted: "rgba(254,215,170,0.9)",
+  },
+  // Cyan / teal
+  {
+    background: "#021518",
+    backgroundAlt: "#042024",
+    accent: "#2dd4bf",
+    accentSoft: "rgba(45,212,191,0.18)",
+    border: "rgba(94,234,212,0.6)",
+    textPrimary: "#ecfeff",
+    textMuted: "rgba(204,251,241,0.9)",
+  },
+];
 
-    if (!prompt || typeof prompt !== "string") {
-      return NextResponse.json(
-        { error: "Prompt manquant ou invalide." },
-        { status: 400 }
-      );
-    }
+function randomPresetTheme(): Theme {
+  const i = Math.floor(Math.random() * PRESET_THEMES.length);
+  return PRESET_THEMES[i];
+}
 
-    // 🧠 Instructions pour GPT-5.1
-    const systemInstructions = `
-Tu es un expert front-end senior.
+/** merge : thème généré par l’IA + palette aléatoire propre */
+function getTheme(t?: Theme) {
+  const base = randomPresetTheme();
+  return {
+    background: t?.background || base.background,
+    backgroundAlt: t?.backgroundAlt || base.backgroundAlt,
+    accent: t?.accent || base.accent,
+    accentSoft: t?.accentSoft || base.accentSoft,
+    border: t?.border || base.border,
+    textPrimary: t?.textPrimary || base.textPrimary,
+    textMuted: t?.textMuted || base.textMuted,
+  };
+}
 
-TA MISSION : créer UNE SEULE page HTML complète qui fonctionne comme une vraie APPLICATION WEB.
-
-CONTRAINTES OBLIGATOIRES :
-
-1. STYLE VISUEL :
-   - Fond noir profond (#050308) avec dégradés subtils.
-   - Détails or luxe (style Ultimated / Louis Vuitton) : #f6d88c, #f0c878, #b9832e.
-   - Typo lisible, texte en blanc ou or (jamais noir sur fond noir).
-
-2. CONTENU MINIMUM :
-   La page DOIT avoir AU MOINS :
-   - Un header avec le nom de l'app.
-   - Une sidebar OU un top navigation (menu).
-   - 3 cartes de statistiques (ex: "Appels du jour", "Remorquages en cours", etc.).
-   - Un tableau avec plusieurs lignes (liste d'éléments).
-   - Une section "détail" ou "timeline".
-   - Plusieurs boutons visibles (ex : "Assigner", "Clôturer", "Voir détail").
-
-3. INTERACTIONS (JAVASCRIPT NATIF) :
-   - Onglets qui changent le contenu de la zone principale.
-   - Boutons qui changent l'état affiché (ex: filtres, statut, panneau ouvert/fermé).
-   - Aucune requête réseau (pas de fetch), tout en front.
-   - Utilise document.querySelector, addEventListener, etc.
-
-4. CODE :
-   - AUCUN markdown, AUCUN bloc \`\`\`.
-   - AUCUN React, Tailwind ou autre framework.
-   - Tout le CSS dans une balise <style>.
-   - Tout le JS dans une balise <script>.
-   - Le document doit commencer par <!DOCTYPE html>.
-`.trim();
-
-    const userInput = `
-Idée de l'application à construire :
-
-"${prompt}"
-
-Crée une web app de type dashboard (style outil pro), thème noir & or Ultimated,
-avec au minimum header, sidebar ou topbar, plusieurs cartes de stats, un tableau,
-des boutons fonctionnels (JS) et du texte lisible (blanc/or).
-`.trim();
-
-    // 🔗 Appel à l’API Responses avec GPT-5.1
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+/** fallback si GPT foire le JSON */
+function defaultConfig(prompt: string): AppConfig {
+  return {
+    appName: prompt || "Ultimated Dashboard",
+    description:
+      "Dashboard généré par Ultimated Builder IA. Adapte ensuite cette base pour ton vrai projet.",
+    cards: [
+      {
+        label: "Tâches actives",
+        value: "12",
+        hint: "Éléments en cours de traitement.",
       },
-      body: JSON.stringify({
-        model: "gpt-5.1",
-        instructions: systemInstructions,
-        input: userInput,
-        max_output_tokens: 4000,
-      }),
-    });
+      {
+        label: "Priorité élevée",
+        value: "4",
+        hint: "Demandes à traiter en premier.",
+      },
+      {
+        label: "Clôturées aujourd'hui",
+        value: "18",
+        hint: "Opérations terminées.",
+      },
+    ],
+    columns: ["ID", "Description", "Statut", "Action"],
+    rows: [
+      ["#1024", "Mission prioritaire", "En cours", "Détail"],
+      ["#1025", "Nouvelle demande", "En attente", "Assigner"],
+      ["#1026", "Validation finale", "À vérifier", "Valider"],
+    ],
+    timeline: [
+      { text: "Nouvelle mission créée.", time: "Il y a 3 min" },
+      { text: "Statut mis à jour.", time: "Il y a 11 min" },
+      { text: "Mission clôturée avec succès.", time: "Il y a 27 min" },
+    ],
+  };
+}
 
-    const data = await response.json();
+/** Construit la page HTML finale (dashboard complet) */
+function buildHtml(config: AppConfig): string {
+  const safeTitle = config.appName || "Ultimated App";
+  const th = getTheme(config.theme);
 
-    if (!response.ok) {
-      console.error("❌ Erreur OpenAI (GPT-5.1):", data);
-      return NextResponse.json(
-        {
-          error:
-            data.error?.message ||
-            "Erreur renvoyée par l'API OpenAI (GPT-5.1). Vérifie ta clé ou ton compte.",
-        },
-        { status: 500 }
-      );
-    }
+  const cardsHtml = config.cards
+    .map(
+      (c) => `
+      <article class="card">
+        <div class="card-label">${c.label}</div>
+        <div class="card-value">${c.value}</div>
+        <div class="card-sub">${c.hint}</div>
+      </article>
+    `
+    )
+    .join("");
 
-    // 🧾 Récupération du texte dans la structure Responses
-    let html: string =
-      data.output?.[0]?.content?.[0]?.text?.toString().trim() || "";
+  const headerRowHtml = `
+    <tr>
+      ${config.columns.map((col) => `<th>${col}</th>`).join("")}
+    </tr>
+  `;
 
-    // 🧽 Nettoyage : au cas où il met encore des ```html
-    html = html
-      .replace(/^```html/i, "")
-      .replace(/^```/i, "")
-      .replace(/```$/i, "")
-      .trim();
+  const rowsHtml = config.rows
+    .map(
+      (row) => `
+      <tr>
+        ${row
+          .map((cell, idx) => {
+            if (idx === 2) {
+              return `<td><span class="status-pill">${cell}</span></td>`;
+            }
+            if (idx === row.length - 1) {
+              return `<td><button class="btn-ghost">${cell || "Détail"}</button></td>`;
+            }
+            return `<td>${cell}</td>`;
+          })
+          .join("")}
+      </tr>
+    `
+    )
+    .join("");
 
-    // 🛡️ Sécurité : si le HTML est trop court ou quasi vide, on met un template par défaut
-    const tooShort = html.length < 300;
+  const timelineHtml = config.timeline
+    .map(
+      (t) => `
+      <div class="timeline-item">
+        <div class="dot"></div>
+        <div>
+          <div class="timeline-text">${t.text}</div>
+          <div class="timeline-time">${t.time}</div>
+        </div>
+      </div>
+    `
+    )
+    .join("");
 
-    if (tooShort || !html.toLowerCase().includes("<html")) {
-      const safeTitle = prompt.slice(0, 60);
-      html = `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <title>Ultimated App — ${safeTitle}</title>
+  <title>${safeTitle} — Ultimated Builder IA</title>
   <style>
+    :root {
+      --bg: ${th.background};
+      --bg-alt: ${th.backgroundAlt};
+      --accent: ${th.accent};
+      --accent-soft: ${th.accentSoft};
+      --border: ${th.border};
+      --text: ${th.textPrimary};
+      --text-muted: ${th.textMuted};
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #3c2810 0, #050308 55%, #000);
-      color: #fdfaf4;
+      background: radial-gradient(circle at top, var(--bg-alt) 0, var(--bg) 55%, #000);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
     }
     .sidebar {
       width: 230px;
       padding: 24px 18px;
-      border-right: 1px solid rgba(246,216,140,0.25);
+      border-right: 1px solid var(--border);
       background: rgba(0,0,0,0.85);
     }
     .logo {
@@ -148,19 +229,19 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
       width: 26px;
       height: 26px;
       border-radius: 999px;
-      background: linear-gradient(135deg,#f6ddb0,#f0c878,#b9832e);
+      background: var(--accent);
       display: flex;
       align-items: center;
-      justify-content: center;
+      justifyContent: center;
       font-weight: 700;
       font-size: 11px;
-      color: #1a1307;
+      color: #050308;
     }
     .logo-text {
       font-size: 11px;
       letter-spacing: .18em;
       text-transform: uppercase;
-      color: #f4dfb0;
+      color: var(--text-muted);
     }
     .menu {
       display: flex;
@@ -175,13 +256,13 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
       border-radius: 999px;
       border: 1px solid transparent;
       padding: 6px 10px;
-      color: rgba(255,255,255,0.75);
+      color: var(--text-muted);
       cursor: pointer;
     }
     .menu button.active {
-      border-color: rgba(246,216,140,0.9);
-      background: rgba(246,216,140,0.12);
-      color: #f6d88c;
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--text);
     }
     .main {
       flex: 1;
@@ -201,7 +282,7 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
     }
     .subtitle {
       font-size: 13px;
-      color: rgba(255,255,255,0.65);
+      color: var(--text-muted);
       margin-top: 4px;
     }
     .top-actions {
@@ -213,8 +294,8 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
       border-radius: 999px;
       border: none;
       padding: 7px 14px;
-      background: linear-gradient(135deg,#f6ddb0,#f0c878,#b9832e);
-      color: #1a1307;
+      background: var(--accent);
+      color: #050308;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
@@ -222,10 +303,10 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
     }
     .btn-ghost {
       border-radius: 999px;
-      border: 1px solid rgba(246,216,140,0.5);
+      border: 1px solid var(--accent);
       padding: 6px 12px;
       background: rgba(0,0,0,0.75);
-      color: rgba(246,216,140,0.9);
+      color: var(--accent);
       font-size: 12px;
       cursor: pointer;
     }
@@ -233,18 +314,19 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
       display: grid;
       grid-template-columns: repeat(3, minmax(0,1fr));
       gap: 14px;
+      margin-top: 12px;
     }
     .card {
       border-radius: 16px;
       padding: 12px 14px;
-      background: radial-gradient(circle at top left, rgba(246,216,140,0.22), rgba(0,0,0,0.9));
-      border: 1px solid rgba(246,216,140,0.22);
+      background: radial-gradient(circle at top left, var(--accent-soft), rgba(0,0,0,0.9));
+      border: 1px solid var(--border);
     }
     .card-label {
       font-size: 11px;
       letter-spacing: .16em;
       text-transform: uppercase;
-      color: rgba(246,216,140,0.85);
+      color: var(--text-muted);
       margin-bottom: 6px;
     }
     .card-value {
@@ -254,7 +336,7 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
     }
     .card-sub {
       font-size: 11px;
-      color: rgba(255,255,255,0.7);
+      color: var(--text-muted);
     }
     .layout {
       display: grid;
@@ -264,15 +346,15 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
     }
     .panel {
       border-radius: 18px;
-      background: rgba(5,3,8,0.95);
-      border: 1px solid rgba(246,216,140,0.25);
+      background: rgba(4,6,18,0.95);
+      border: 1px solid var(--border);
       padding: 14px 16px;
     }
     .panel h3 {
       font-size: 13px;
       letter-spacing: .16em;
       text-transform: uppercase;
-      color: rgba(246,216,140,0.9);
+      color: var(--text-muted);
       margin-bottom: 10px;
     }
     table {
@@ -282,23 +364,23 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
     }
     th, td {
       padding: 6px 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(15,23,42,0.9);
     }
     th {
       text-align: left;
-      color: rgba(255,255,255,0.65);
+      color: var(--text-muted);
       font-weight: 500;
       font-size: 11px;
     }
     tr:hover td {
-      background: rgba(246,216,140,0.06);
+      background: rgba(15,23,42,0.9);
     }
     .status-pill {
       padding: 2px 8px;
       border-radius: 999px;
       font-size: 10px;
-      border: 1px solid rgba(246,216,140,0.6);
-      color: rgba(246,216,140,0.92);
+      border: 1px solid var(--accent);
+      color: var(--accent);
     }
     .timeline {
       display: flex;
@@ -315,21 +397,21 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
       width: 9px;
       height: 9px;
       border-radius: 999px;
-      background: linear-gradient(135deg,#f6ddb0,#b9832e);
+      background: var(--accent);
       margin-top: 4px;
     }
     .timeline-text {
-      color: rgba(255,255,255,0.8);
+      color: var(--text);
     }
     .timeline-time {
       font-size: 11px;
-      color: rgba(255,255,255,0.55);
+      color: var(--text-muted);
     }
     footer {
       margin-top: 12px;
       font-size: 10px;
       text-align: right;
-      color: rgba(255,255,255,0.45);
+      color: var(--text-muted);
     }
   </style>
 </head>
@@ -339,7 +421,7 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
       <div class="logo-badge">UB</div>
       <div class="logo-text">Ultimated Builder IA</div>
     </div>
-    <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:10px;">
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;">
       Vue générale
     </div>
     <div class="menu">
@@ -353,10 +435,8 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
   <main class="main">
     <div class="topbar">
       <div>
-        <div class="title">Ultimated App — ${safeTitle || "Aperçu généré"}</div>
-        <div class="subtitle">
-          Dashboard généré par Ultimated Builder IA. Adapte ensuite cette base pour ton vrai projet.
-        </div>
+        <div class="title">${safeTitle}</div>
+        <div class="subtitle">${config.description}</div>
       </div>
       <div class="top-actions">
         <button class="btn-ghost" id="toggle-theme">Mode clair</button>
@@ -365,81 +445,21 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
     </div>
 
     <section class="cards" id="cards">
-      <article class="card">
-        <div class="card-label">Tâches actives</div>
-        <div class="card-value" id="metric-main">12</div>
-        <div class="card-sub">Missions en cours de traitement.</div>
-      </article>
-      <article class="card">
-        <div class="card-label">Priorité élevée</div>
-        <div class="card-value">4</div>
-        <div class="card-sub">Demandes à traiter en premier.</div>
-      </article>
-      <article class="card">
-        <div class="card-label">Clôturées aujourd'hui</div>
-        <div class="card-value">18</div>
-        <div class="card-sub">Taux de complétion en hausse.</div>
-      </article>
+      ${cardsHtml}
     </section>
 
     <section class="layout">
       <div class="panel">
         <h3>Liste des éléments</h3>
         <table id="items-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Description</th>
-              <th>Statut</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>#1024</td>
-              <td>Mission prioritaire</td>
-              <td><span class="status-pill">En cours</span></td>
-              <td><button class="btn-ghost">Détail</button></td>
-            </tr>
-            <tr>
-              <td>#1025</td>
-              <td>Nouvelle demande</td>
-              <td><span class="status-pill">En attente</span></td>
-              <td><button class="btn-ghost">Assigner</button></td>
-            </tr>
-            <tr>
-              <td>#1026</td>
-              <td>Clôture en validation</td>
-              <td><span class="status-pill">À vérifier</span></td>
-              <td><button class="btn-ghost">Valider</button></td>
-            </tr>
-          </tbody>
+          <thead>${headerRowHtml}</thead>
+          <tbody>${rowsHtml}</tbody>
         </table>
       </div>
       <div class="panel">
         <h3>Flux en direct</h3>
         <div class="timeline" id="timeline">
-          <div class="timeline-item">
-            <div class="dot"></div>
-            <div>
-              <div class="timeline-text">Nouvelle mission créée.</div>
-              <div class="timeline-time">Il y a 3 min</div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="dot"></div>
-            <div>
-              <div class="timeline-text">Statut mis à jour sur "En route".</div>
-              <div class="timeline-time">Il y a 12 min</div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="dot"></div>
-            <div>
-              <div class="timeline-text">Mission clôturée avec succès.</div>
-              <div class="timeline-time">Il y a 28 min</div>
-            </div>
-          </div>
+          ${timelineHtml}
         </div>
       </div>
     </section>
@@ -451,7 +471,6 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
 
   <script>
     const menuButtons = document.querySelectorAll(".menu button");
-    const metricMain = document.getElementById("metric-main");
     const timeline = document.getElementById("timeline");
     const toggleThemeBtn = document.getElementById("toggle-theme");
 
@@ -460,16 +479,6 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
         menuButtons.forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         const tab = btn.getAttribute("data-tab");
-
-        if (tab === "dash") {
-          metricMain.textContent = "12";
-        } else if (tab === "today") {
-          metricMain.textContent = "7";
-        } else if (tab === "archive") {
-          metricMain.textContent = "42";
-        } else if (tab === "settings") {
-          metricMain.textContent = "—";
-        }
 
         const extra = document.createElement("div");
         extra.className = "timeline-item";
@@ -482,24 +491,128 @@ des boutons fonctionnels (JS) et du texte lisible (blanc/or).
     toggleThemeBtn?.addEventListener("click", () => {
       light = !light;
       document.body.style.background = light
-        ? "radial-gradient(circle at top,#f6ddb0,#f0c878,#b9832e)"
-        : "radial-gradient(circle at top, #3c2810 0, #050308 55%, #000)";
+        ? "radial-gradient(circle at top, #e5e7eb 0,#f9fafb 55%,#e5e7eb)"
+        : "radial-gradient(circle at top, var(--bg-alt) 0, var(--bg) 55%, #000)";
       toggleThemeBtn.textContent = light ? "Mode sombre" : "Mode clair";
     });
   </script>
 </body>
 </html>`;
+}
+
+export async function POST(req: Request) {
+  try {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      console.error("❌ OPENAI_API_KEY manquante");
+      return NextResponse.json(
+        {
+          error:
+            "OPENAI_API_KEY manquante. Ajoute ta clé dans Vercel (OPENAI_API_KEY) puis redeploie.",
+        },
+        { status: 500 }
+      );
     }
 
+    const { prompt } = await req.json();
+    if (!prompt || typeof prompt !== "string") {
+      return NextResponse.json(
+        { error: "Prompt manquant ou invalide." },
+        { status: 400 }
+      );
+    }
+
+    // 🧠 Demande à GPT-5.1 un JSON avec éventuellement un theme
+    const system = `
+Tu renvoies UNIQUEMENT un JSON valide, sans markdown.
+Format attendu :
+
+{
+  "appName": "Nom court",
+  "description": "Phrase courte qui décrit le dashboard",
+  "theme": {
+    "background": "#0b1020",
+    "backgroundAlt": "#020617",
+    "accent": "#38bdf8",
+    "accentSoft": "rgba(56,189,248,0.18)",
+    "border": "rgba(148,163,184,0.6)",
+    "textPrimary": "#e5f2ff",
+    "textMuted": "rgba(191,219,254,0.9)"
+  },
+  "cards": [
+    { "label": "...", "value": "...", "hint": "..." }
+  ],
+  "columns": ["Col 1", "Col 2", "Col 3", "Col 4"],
+  "rows": [
+    ["val1", "val2", "val3", "val4"]
+  ],
+  "timeline": [
+    { "text": "Événement", "time": "Il y a X min" }
+  ]
+}
+
+- Si la personne précise des couleurs ou un thème (ex: "thème rouge et noir", "look pastel bleu et rose"),
+  adapte l'objet "theme" en conséquence.
+- Si tu n'es pas sûr des couleurs, mets "theme": null ou ne le mets pas : le serveur choisira une palette aléatoire propre.
+`.trim();
+
+    const user = `
+Idée de l'application :
+
+"${prompt}"
+
+Construit un JSON pour un dashboard professionnel qui gère ce type d'app.
+`.trim();
+
+    const resp = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-5.1",
+        instructions: system,
+        input: user,
+        max_output_tokens: 1200,
+      }),
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      console.error("❌ Erreur OpenAI (JSON config):", data);
+      const fallback = defaultConfig(prompt);
+      const htmlFallback = buildHtml(fallback);
+      return NextResponse.json({ html: htmlFallback });
+    }
+
+    let raw = data.output?.[0]?.content?.[0]?.text?.toString() || "";
+    // nettoyage éventuels ```json
+    raw = raw
+      .replace(/^```json/i, "")
+      .replace(/^```/i, "")
+      .replace(/```$/i, "")
+      .trim();
+
+    let config: AppConfig;
+    try {
+      config = JSON.parse(raw);
+    } catch (e) {
+      console.error("❌ JSON.parse échoué, on utilise le fallback:", e, raw);
+      config = defaultConfig(prompt);
+    }
+
+    // sécurité si GPT oublie des champs
+    if (!config || !config.cards || !config.columns || !config.rows) {
+      config = defaultConfig(prompt);
+    }
+
+    const html = buildHtml(config);
     return NextResponse.json({ html });
   } catch (err: any) {
-    console.error("Erreur /api/generate (serveur) :", err);
-    return NextResponse.json(
-      {
-        error:
-          "Erreur interne lors de la génération. Vérifie les logs Vercel si le problème persiste.",
-      },
-      { status: 500 }
-    );
+    console.error("Erreur /api/generate :", err);
+    const html = buildHtml(defaultConfig("Ultimated Dashboard"));
+    return NextResponse.json({ html });
   }
 }
